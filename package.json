@@ -48,7 +48,7 @@
     "husky": "7.0.4",
     "jest": "28.1.0",
     "jsdom": "16.4.0",
-    "microbundle": "0.14.2",
+    "microbundle": "0.15.0",
     "prettier": "2.6.2",
     "raf": "3.4.1",
     "react": "16.14.0",
