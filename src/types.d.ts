@@ -1,95 +1,159 @@
-declare module 'react-helmet-async-ts' {
-  import React from 'react';
+import type { HelmetData } from './HelmetData';
 
-  interface OtherElementAttributes {
-    [key: string]: string | number | boolean | null | undefined;
-  }
+type HelmetProps = {
+  base?: Partial<HTMLBaseElement> | undefined;
+  bodyAttributes?: Partial<HTMLBodyElement> | undefined;
+  children?: React.ReactNode;
+  defaultTitle?: string | undefined;
+  defer?: boolean | undefined;
+  encodeSpecialCharacters?: boolean | undefined;
+  helmetData?: HelmetData | undefined;
+  htmlAttributes?: Partial<HTMLHtmlElement> | undefined;
+  link?: Array<Partial<HTMLLinkElement>> | undefined;
+  meta?: Array<Partial<HTMLMetaElement>> | undefined;
+  noscript?: Array<Partial<HTMLElement>> | undefined;
+  onChangeClientState?: (() => void) | undefined;
+  prioritizeSeoTags?: boolean | undefined;
+  script?: Array<Partial<HTMLScriptElement>> | undefined;
+  style?: Array<Partial<HTMLStyleElement>> | undefined;
+  title?: string | undefined;
+  titleAttributes?: Partial<HTMLTitleElement> | undefined;
+  titleTemplate?: string | undefined;
+};
 
-  type HtmlProps = JSX.IntrinsicElements['html'] & OtherElementAttributes;
+type HelmetPropsWithoutChildren = Omit<HelmetProps, 'children'>;
 
-  type BodyProps = JSX.IntrinsicElements['body'] & OtherElementAttributes;
+type ArrayTypeChildren = Record<string, unknown>;
 
-  type LinkProps = JSX.IntrinsicElements['link'];
+type ArrayTypeChildrenArgs = {
+  child: React.ReactElement;
+  arrayTypeChildren: ArrayTypeChildren;
+  newChildProps: Record<string, unknown>;
+  nestedChildren: React.ReactNode;
+};
 
-  type MetaProps = JSX.IntrinsicElements['meta'];
+type ObjectTypeChildrenArgs = {
+  child: React.ReactElement;
+  newProps: HelmetPropsWithoutChildren;
+  newChildProps: Record<string, unknown>;
+  nestedChildren: React.ReactNode;
+};
+/**
+   * Provider Prop Types
+    static propTypes = {
+    context: PropTypes.shape({
+      helmet: PropTypes.shape(),
+    }),
+    children: PropTypes.node.isRequired,
+  };
 
-  export interface HelmetTags {
-    baseTag: Array<any>;
-    linkTags: Array<HTMLLinkElement>;
-    metaTags: Array<HTMLMetaElement>;
-    noscriptTags: Array<any>;
-    scriptTags: Array<HTMLScriptElement>;
-    styleTags: Array<HTMLStyleElement>;
-  }
+  export const providerShape = PropTypes.shape({
+  setHelmet: PropTypes.func,
+  helmetInstances: PropTypes.shape({
+    get: PropTypes.func,
+    add: PropTypes.func,
+    remove: PropTypes.func,
+  }),
+});
+   */
 
-  export interface HelmetProps {
-    async?: boolean;
-    base?: any;
-    bodyAttributes?: BodyProps;
-    defaultTitle?: string;
-    defer?: boolean;
-    encodeSpecialCharacters?: boolean;
-    helmetData?: HelmetData;
-    htmlAttributes?: HtmlProps;
-    onChangeClientState?: (newState: any, addedTags: HelmetTags, removedTags: HelmetTags) => void;
-    link?: LinkProps[];
-    meta?: MetaProps[];
-    noscript?: Array<any>;
-    script?: Array<any>;
-    style?: Array<any>;
-    title?: string;
-    titleAttributes?: Object;
-    titleTemplate?: string;
-    prioritizeSeoTags?: boolean;
-  }
+// interface OtherElementAttributes {
+//   [key: string]: string | number | boolean | null | undefined;
+// }
 
-  export class Helmet extends React.Component<React.PropsWithChildren<HelmetProps>> {}
+// type HtmlProps = JSX.IntrinsicElements['html'] & OtherElementAttributes;
 
-  export interface HelmetServerState {
-    base: HelmetDatum;
-    bodyAttributes: HelmetHTMLBodyDatum;
-    htmlAttributes: HelmetHTMLElementDatum;
-    link: HelmetDatum;
-    meta: HelmetDatum;
-    noscript: HelmetDatum;
-    script: HelmetDatum;
-    style: HelmetDatum;
-    title: HelmetDatum;
-    titleAttributes: HelmetDatum;
-    priority: HelmetDatum;
-  }
+// type BodyProps = JSX.IntrinsicElements['body'] & OtherElementAttributes;
 
-  export interface HelmetDatum {
-    toString(): string;
-    toComponent(): React.Component<any>;
-  }
+// type LinkProps = JSX.IntrinsicElements['link'];
 
-  export interface HelmetHTMLBodyDatum {
-    toString(): string;
-    toComponent(): React.HTMLAttributes<HTMLBodyElement>;
-  }
+// type MetaProps = JSX.IntrinsicElements['meta'];
 
-  export interface HelmetHTMLElementDatum {
-    toString(): string;
-    toComponent(): React.HTMLAttributes<HTMLHtmlElement>;
-  }
+// export interface HelmetTags {
+//   baseTag: Array<any>;
+//   linkTags: Array<HTMLLinkElement>;
+//   metaTags: Array<HTMLMetaElement>;
+//   noscriptTags: Array<any>;
+//   scriptTags: Array<HTMLScriptElement>;
+//   styleTags: Array<HTMLStyleElement>;
+// }
 
-  export interface FilledContext {
-    helmet: HelmetServerState;
-  }
+// export interface HelmetProps {
+//   async?: boolean;
+//   base?: any;
+//   bodyAttributes?: BodyProps;
+//   defaultTitle?: string;
+//   defer?: boolean;
+//   encodeSpecialCharacters?: boolean;
+//   helmetData?: HelmetData;
+//   htmlAttributes?: HtmlProps;
+//   onChangeClientState?: (newState: any, addedTags: HelmetTags, removedTags: HelmetTags) => void;
+//   link?: LinkProps[];
+//   meta?: MetaProps[];
+//   noscript?: Array<any>;
+//   script?: Array<any>;
+//   style?: Array<any>;
+//   title?: string;
+//   titleAttributes?: Object;
+//   titleTemplate?: string;
+//   prioritizeSeoTags?: boolean;
+// }
 
-  interface ProviderProps {
-    context?: {};
-  }
+// export class Helmet extends React.Component<React.PropsWithChildren<HelmetProps>> {}
 
-  export class HelmetData {
-    constructor(context: any);
-    context: {
-      helmet: HelmetServerState;
-    };
-  }
+// export interface HelmetServerState {
+//   base: HelmetDatum;
+//   bodyAttributes: HelmetHTMLBodyDatum;
+//   htmlAttributes: HelmetHTMLElementDatum;
+//   link: HelmetDatum;
+//   meta: HelmetDatum;
+//   noscript: HelmetDatum;
+//   script: HelmetDatum;
+//   style: HelmetDatum;
+//   title: HelmetDatum;
+//   titleAttributes: HelmetDatum;
+//   priority: HelmetDatum;
+// }
 
-  export class HelmetProvider extends React.Component<React.PropsWithChildren<ProviderProps>> {
-    static canUseDOM: boolean;
-  }
-}
+// export interface HelmetDatum {
+//   toString(): string;
+//   toComponent(): React.Component<any>;
+// }
+
+// export interface HelmetHTMLBodyDatum {
+//   toString(): string;
+//   toComponent(): React.HTMLAttributes<HTMLBodyElement>;
+// }
+
+// export interface HelmetHTMLElementDatum {
+//   toString(): string;
+//   toComponent(): React.HTMLAttributes<HTMLHtmlElement>;
+// }
+
+// export interface FilledContext {
+//   helmet: HelmetServerState;
+// }
+
+// interface ProviderProps {
+//   context?: {};
+// }
+
+// export class HelmetData {
+//   constructor(context: any);
+//   context: {
+//     helmet: HelmetServerState;
+//   };
+// }
+
+// export class HelmetProvider extends React.Component<React.PropsWithChildren<ProviderProps>> {
+//   static canUseDOM: boolean;
+// }
+// }
+
+export type {
+  ArrayTypeChildren,
+  ArrayTypeChildrenArgs,
+  HelmetProps,
+  HelmetPropsWithoutChildren,
+  ObjectTypeChildrenArgs,
+};

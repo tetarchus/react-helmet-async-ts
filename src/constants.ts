@@ -55,7 +55,7 @@ const SEO_PRIORITY_TAGS = {
   },
 };
 
-const VALID_TAG_NAMES = Object.keys(TAG_NAMES).map(name => TAG_NAMES[name]);
+const VALID_TAG_NAMES = Object.keys(TAG_NAMES).map((tagName) => TAG_NAMES[tagName] as string);
 
 const REACT_TAG_MAP = {
   accesskey: 'accessKey',
@@ -68,10 +68,9 @@ const REACT_TAG_MAP = {
   tabindex: 'tabIndex',
 };
 
-const HTML_TAG_MAP = Object.keys(REACT_TAG_MAP).reduce((obj, key) => {
-  obj[REACT_TAG_MAP[key]] = key;
-  return obj;
-}, {});
+const HTML_TAG_MAP = Object.fromEntries(
+  Object.keys(REACT_TAG_MAP).map((key) => [REACT_TAG_MAP[key as keyof typeof REACT_TAG_MAP], key]),
+);
 
 const HELMET_ATTRIBUTE = 'data-rh';
 
