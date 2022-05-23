@@ -1,12 +1,12 @@
-import mapStateOnServer from './server';
+import { mapStateOnServer } from './server';
 
 const instances = [];
 
-export function clearInstances() {
+function clearInstances() {
   instances.length = 0;
 }
 
-export default class HelmetData {
+class HelmetData {
   instances = [];
 
   value = {
@@ -46,3 +46,5 @@ export default class HelmetData {
     }
   }
 }
+
+export { clearInstances, HelmetData };

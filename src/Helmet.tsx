@@ -2,17 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import fastCompare from 'react-fast-compare';
 import invariant from 'invariant';
-import { Context } from './Provider';
-import HelmetData from './HelmetData';
-import Dispatcher from './Dispatcher';
-import { without } from './utils';
-import { TAG_NAMES, VALID_TAG_NAMES, HTML_TAG_MAP } from './constants';
 
-export { default as HelmetData } from './HelmetData';
-export { default as HelmetProvider } from './Provider';
+import { TAG_NAMES, VALID_TAG_NAMES, HTML_TAG_MAP } from './constants';
+import { Dispatcher } from './Dispatcher';
+import { HelmetData } from './HelmetData';
+import { Context } from './Provider';
+import { without } from './utils';
 
 /* eslint-disable class-methods-use-this */
-export class Helmet extends Component {
+class Helmet extends Component {
   /**
    * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
    * @param {Object} bodyAttributes: {"className": "root"}
@@ -245,3 +243,5 @@ export class Helmet extends Component {
     );
   }
 }
+
+export { Helmet };

@@ -173,4 +173,4 @@ const handleStateChangeOnClient = newState => {
   }
 };
 
-export default handleStateChangeOnClient;
+export { handleStateChangeOnClient };

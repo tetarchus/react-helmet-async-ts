@@ -1,13 +1,4 @@
-import { TAG_NAMES, TAG_PROPERTIES, ATTRIBUTE_NAMES } from './constants';
-
-const HELMET_PROPS = {
-  DEFAULT_TITLE: 'defaultTitle',
-  DEFER: 'defer',
-  ENCODE_SPECIAL_CHARACTERS: 'encodeSpecialCharacters',
-  ON_CHANGE_CLIENT_STATE: 'onChangeClientState',
-  TITLE_TEMPLATE: 'titleTemplate',
-  PRIORITIZE_SEO_TAGS: 'prioritizeSeoTags',
-};
+import { HELMET_PROPS, TAG_NAMES, TAG_PROPERTIES, ATTRIBUTE_NAMES } from './constants';
 
 const getInnermostProperty = (propsList, property) => {
   for (let i = propsList.length - 1; i >= 0; i -= 1) {
@@ -218,10 +209,8 @@ const reducePropsToState = propsList => ({
   prioritizeSeoTags: getAnyTrueFromPropsList(propsList, HELMET_PROPS.PRIORITIZE_SEO_TAGS),
 });
 
-export const flattenArray = possibleArray =>
+const flattenArray = possibleArray =>
   Array.isArray(possibleArray) ? possibleArray.join('') : possibleArray;
-
-export { reducePropsToState };
 
 const checkIfPropsMatch = (props, toMatch) => {
   const keys = Object.keys(props);
@@ -234,7 +223,7 @@ const checkIfPropsMatch = (props, toMatch) => {
   return false;
 };
 
-export const prioritizer = (elementsList, propsToMatch) => {
+const prioritizer = (elementsList, propsToMatch) => {
   if (Array.isArray(elementsList)) {
     return elementsList.reduce(
       (acc, elementAttrs) => {
@@ -251,9 +240,11 @@ export const prioritizer = (elementsList, propsToMatch) => {
   return { default: elementsList };
 };
 
-export const without = (obj, key) => {
+const without = (obj, key) => {
   return {
     ...obj,
     [key]: undefined,
   };
 };
+
+export { flattenArray, prioritizer, reducePropsToState, without };

@@ -1,17 +1,12 @@
-import { Component } from 'react';
+import React from 'react';
 import shallowEqual from 'shallowequal';
-import handleStateChangeOnClient from './client';
-import mapStateOnServer from './server';
+
+import { handleStateChangeOnClient } from './client';
+import { mapStateOnServer } from './server';
 import { reducePropsToState } from './utils';
-import Provider, { providerShape } from './Provider';
+import { Provider } from './Provider';
 
-export default class Dispatcher extends Component {
-  static propTypes = {
-    context: providerShape.isRequired,
-  };
-
-  static displayName = 'HelmetDispatcher';
-
+class Dispatcher extends React.Component {
   rendered = false;
 
   shouldComponentUpdate(nextProps) {
@@ -67,3 +62,5 @@ export default class Dispatcher extends Component {
     return null;
   }
 }
+
+export { Dispatcher };

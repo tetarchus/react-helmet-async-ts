@@ -194,4 +194,4 @@ const mapStateOnServer = props => {
   };
 };
 
-export default mapStateOnServer;
+export { mapStateOnServer };

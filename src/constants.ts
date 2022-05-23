@@ -1,4 +1,4 @@
-export const TAG_PROPERTIES = {
+const TAG_PROPERTIES = {
   CHARSET: 'charset',
   CSS_TEXT: 'cssText',
   HREF: 'href',
@@ -11,13 +11,13 @@ export const TAG_PROPERTIES = {
   SRC: 'src',
 };
 
-export const ATTRIBUTE_NAMES = {
+const ATTRIBUTE_NAMES = {
   BODY: 'bodyAttributes',
   HTML: 'htmlAttributes',
   TITLE: 'titleAttributes',
 };
 
-export const TAG_NAMES = {
+const TAG_NAMES = {
   BASE: 'base',
   BODY: 'body',
   HEAD: 'head',
@@ -31,7 +31,7 @@ export const TAG_NAMES = {
   FRAGMENT: 'Symbol(react.fragment)',
 };
 
-export const SEO_PRIORITY_TAGS = {
+const SEO_PRIORITY_TAGS = {
   link: { rel: ['amphtml', 'canonical', 'alternate'] },
   script: { type: ['application/ld+json'] },
   meta: {
@@ -55,9 +55,9 @@ export const SEO_PRIORITY_TAGS = {
   },
 };
 
-export const VALID_TAG_NAMES = Object.keys(TAG_NAMES).map(name => TAG_NAMES[name]);
+const VALID_TAG_NAMES = Object.keys(TAG_NAMES).map(name => TAG_NAMES[name]);
 
-export const REACT_TAG_MAP = {
+const REACT_TAG_MAP = {
   accesskey: 'accessKey',
   charset: 'charSet',
   class: 'className',
@@ -68,9 +68,30 @@ export const REACT_TAG_MAP = {
   tabindex: 'tabIndex',
 };
 
-export const HTML_TAG_MAP = Object.keys(REACT_TAG_MAP).reduce((obj, key) => {
+const HTML_TAG_MAP = Object.keys(REACT_TAG_MAP).reduce((obj, key) => {
   obj[REACT_TAG_MAP[key]] = key;
   return obj;
 }, {});
 
-export const HELMET_ATTRIBUTE = 'data-rh';
+const HELMET_ATTRIBUTE = 'data-rh';
+
+const HELMET_PROPS = {
+  DEFAULT_TITLE: 'defaultTitle',
+  DEFER: 'defer',
+  ENCODE_SPECIAL_CHARACTERS: 'encodeSpecialCharacters',
+  ON_CHANGE_CLIENT_STATE: 'onChangeClientState',
+  TITLE_TEMPLATE: 'titleTemplate',
+  PRIORITIZE_SEO_TAGS: 'prioritizeSeoTags',
+};
+
+export {
+  ATTRIBUTE_NAMES,
+  HELMET_ATTRIBUTE,
+  HELMET_PROPS,
+  HTML_TAG_MAP,
+  REACT_TAG_MAP,
+  SEO_PRIORITY_TAGS,
+  TAG_NAMES,
+  TAG_PROPERTIES,
+  VALID_TAG_NAMES,
+};
