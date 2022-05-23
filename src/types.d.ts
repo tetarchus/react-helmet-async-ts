@@ -99,36 +99,38 @@ type ObjectTypeChildrenArgs = {
 //   prioritizeSeoTags?: boolean;
 // }
 
-// export class Helmet extends React.Component<React.PropsWithChildren<HelmetProps>> {}
+type HelmetDatum = {
+  toString: () => string;
+  toComponent: () => React.Component;
+};
 
-// export interface HelmetServerState {
-//   base: HelmetDatum;
-//   bodyAttributes: HelmetHTMLBodyDatum;
-//   htmlAttributes: HelmetHTMLElementDatum;
-//   link: HelmetDatum;
-//   meta: HelmetDatum;
-//   noscript: HelmetDatum;
-//   script: HelmetDatum;
-//   style: HelmetDatum;
-//   title: HelmetDatum;
-//   titleAttributes: HelmetDatum;
-//   priority: HelmetDatum;
-// }
+type HelmetHTMLBodyDatum = {
+  toString: () => string;
+  toComponent: () => React.HTMLAttributes<HTMLBodyElement>;
+};
 
-// export interface HelmetDatum {
-//   toString(): string;
-//   toComponent(): React.Component<any>;
-// }
+type HelmetHTMLElementDatum = {
+  toString: () => string;
+  toComponent: () => React.HTMLAttributes<HTMLHtmlElement>;
+};
 
-// export interface HelmetHTMLBodyDatum {
-//   toString(): string;
-//   toComponent(): React.HTMLAttributes<HTMLBodyElement>;
-// }
+type HelmetServerState = {
+  base: HelmetDatum;
+  bodyAttributes: HelmetHTMLBodyDatum;
+  htmlAttributes: HelmetHTMLElementDatum;
+  link: HelmetDatum;
+  meta: HelmetDatum;
+  noscript: HelmetDatum;
+  script: HelmetDatum;
+  style: HelmetDatum;
+  title: HelmetDatum;
+  // titleAttributes: HelmetDatum;
+  priority: HelmetDatum;
+};
 
-// export interface HelmetHTMLElementDatum {
-//   toString(): string;
-//   toComponent(): React.HTMLAttributes<HTMLHtmlElement>;
-// }
+type HelmetDataContext = {
+  helmet?: HelmetServerState;
+};
 
 // export interface FilledContext {
 //   helmet: HelmetServerState;
@@ -153,7 +155,9 @@ type ObjectTypeChildrenArgs = {
 export type {
   ArrayTypeChildren,
   ArrayTypeChildrenArgs,
+  HelmetDataContext,
   HelmetProps,
   HelmetPropsWithoutChildren,
+  HelmetServerState,
   ObjectTypeChildrenArgs,
 };

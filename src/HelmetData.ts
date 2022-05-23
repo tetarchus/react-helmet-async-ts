@@ -1,36 +1,42 @@
 import { mapStateOnServer } from './server';
 
-const instances = [];
+import type { HelmetDataContext, HelmetServerState } from './types';
 
-function clearInstances() {
-  instances.length = 0;
-}
+const domInstances = [];
+
+const clearInstances = (): void => {
+  domInstances.length = 0;
+};
 
 class HelmetData {
-  instances = [];
+  public readonly instances = [];
 
-  value = {
-    setHelmet: serverState => {
+  public canUseDOM: boolean;
+
+  public context: HelmetDataContext;
+
+  public readonly value = {
+    setHelmet: (serverState: HelmetServerState): void => {
       this.context.helmet = serverState;
     },
     helmetInstances: {
-      get: () => (this.canUseDOM ? instances : this.instances),
-      add: instance => {
-        (this.canUseDOM ? instances : this.instances).push(instance);
+      get: () => (this.canUseDOM ? domInstances : this.instances),
+      add: (instance): void => {
+        (this.canUseDOM ? domInstances : this.instances).push(instance);
       },
-      remove: instance => {
-        const index = (this.canUseDOM ? instances : this.instances).indexOf(instance);
-        (this.canUseDOM ? instances : this.instances).splice(index, 1);
+      remove: (instance): void => {
+        const index = (this.canUseDOM ? domInstances : this.instances).indexOf(instance);
+        (this.canUseDOM ? domInstances : this.instances).splice(index, 1);
       },
     },
   };
 
-  constructor(context, canUseDOM = typeof document !== 'undefined') {
+  public constructor(context: HelmetDataContext, canUseDOM = typeof document !== 'undefined') {
     this.context = context;
     this.canUseDOM = canUseDOM;
 
     if (!canUseDOM) {
-      context.helmet = mapStateOnServer({
+      this.context.helmet = mapStateOnServer({
         baseTag: [],
         bodyAttributes: {},
         encodeSpecialCharacters: true,
