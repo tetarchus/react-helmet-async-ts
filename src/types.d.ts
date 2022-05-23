@@ -132,20 +132,11 @@ type HelmetDataContext = {
   helmet?: HelmetServerState;
 };
 
-// export interface FilledContext {
-//   helmet: HelmetServerState;
-// }
+type DispatcherContext = HelmetData['value'];
 
-// interface ProviderProps {
-//   context?: {};
-// }
-
-// export class HelmetData {
-//   constructor(context: any);
-//   context: {
-//     helmet: HelmetServerState;
-//   };
-// }
+type DispatcherProps = {
+  context: DispatcherContext;
+};
 
 // export class HelmetProvider extends React.Component<React.PropsWithChildren<ProviderProps>> {
 //   static canUseDOM: boolean;
@@ -155,6 +146,7 @@ type HelmetDataContext = {
 export type {
   ArrayTypeChildren,
   ArrayTypeChildrenArgs,
+  DispatcherProps,
   HelmetDataContext,
   HelmetProps,
   HelmetPropsWithoutChildren,

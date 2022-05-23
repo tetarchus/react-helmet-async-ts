@@ -1,66 +1,53 @@
 import React from 'react';
-import shallowEqual from 'shallowequal';
 
 import { handleStateChangeOnClient } from './client';
+import { Provider } from './Provider';
 import { mapStateOnServer } from './server';
 import { reducePropsToState } from './utils';
-import { Provider } from './Provider';
 
-class Dispatcher extends React.Component {
-  rendered = false;
+import type { DispatcherProps, HelmetServerState } from './types';
 
-  shouldComponentUpdate(nextProps) {
-    return !shallowEqual(nextProps, this.props);
-  }
+const Dispatcher: React.FC<DispatcherProps> = ({ context }: DispatcherProps) => {
+  const [rendered, setRendered] = React.useState(false);
 
-  componentDidUpdate() {
-    this.emitChange();
-  }
+  // componentWillUnmount() {
+  //   const { helmetInstances } = this.props.context;
+  //   helmetInstances.remove(this);
+  //   this.emitChange();
+  // }
 
-  componentWillUnmount() {
-    const { helmetInstances } = this.props.context;
-    helmetInstances.remove(this);
-    this.emitChange();
-  }
-
-  emitChange() {
-    const { helmetInstances, setHelmet } = this.props.context;
-    let serverState = null;
-    const state = reducePropsToState(
-      helmetInstances.get().map(instance => {
-        const props = { ...instance.props };
-        delete props.context;
-        return props;
-      })
-    );
+  const emitChange = React.useCallback(() => {
+    const { helmetInstances, setHelmet } = context;
+    let serverState: HelmetServerState | null = null;
+    const state = reducePropsToState(helmetInstances.get().map((instance) => ({ ...instance })));
     if (Provider.canUseDOM) {
       handleStateChangeOnClient(state);
     } else if (mapStateOnServer) {
       serverState = mapStateOnServer(state);
     }
     setHelmet(serverState);
-  }
 
-  // componentWillMount will be deprecated
-  // for SSR, initialize on first render
-  // constructor is also unsafe in StrictMode
-  init() {
-    if (this.rendered) {
+    return () => {
+      const { helmetInstances } = context;
+      helmetInstances.remove(this);
+    };
+  }, []);
+
+  const init = React.useCallback(() => {
+    if (rendered) {
       return;
     }
 
-    this.rendered = true;
+    setRendered(true);
 
-    const { helmetInstances } = this.props.context;
+    const { helmetInstances } = context;
     helmetInstances.add(this);
-    this.emitChange();
-  }
+    emitChange();
+  }, []);
 
-  render() {
-    this.init();
+  init();
 
-    return null;
-  }
-}
+  return null;
+};
 
 export { Dispatcher };
