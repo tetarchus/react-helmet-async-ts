@@ -34,6 +34,7 @@
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
     "babel-preset-kyt-react": "1.3.18",
+    "confusing-browser-globals": "^1.0.11",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.6",
     "enzyme-to-json": "3.6.2",
