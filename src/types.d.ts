@@ -1,5 +1,5 @@
-declare module 'react-helmet-async' {
-  import * as React from 'react';
+declare module 'react-helmet-async-ts' {
+  import React from 'react';
 
   interface OtherElementAttributes {
     [key: string]: string | number | boolean | null | undefined;
