@@ -10,7 +10,7 @@ module.exports = {
       files: ['*.{spec,test}.{js,jsx,ts,tsx}'],
       plugins: ['jest'],
       globals: { jsdom: 'readonly' },
-      env: { jest: true, 'jest/globals': true, node: true },
+      env: { jest: true, node: true },
       rules: {
         // Turn off other rules
         'max-classes-per-file': 'off',
