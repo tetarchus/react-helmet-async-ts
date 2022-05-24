@@ -1,51 +1,57 @@
 import React from 'react';
 
 import { handleStateChangeOnClient } from './client';
-import { Provider } from './Provider';
+import { HelmetContext } from './HelmetContext';
 import { mapStateOnServer } from './server';
 import { reducePropsToState } from './utils';
 
 import type { DispatcherProps, HelmetServerState } from './types';
 
-const Dispatcher: React.FC<DispatcherProps> = ({ context }: DispatcherProps) => {
+const Dispatcher: React.FC<DispatcherProps> = (props: DispatcherProps) => {
   const [rendered, setRendered] = React.useState(false);
-
-  // componentWillUnmount() {
-  //   const { helmetInstances } = this.props.context;
-  //   helmetInstances.remove(this);
-  //   this.emitChange();
-  // }
+  const { canUseDOM } = React.useContext(HelmetContext);
+  const { context, ...restProps } = props;
 
   const emitChange = React.useCallback(() => {
-    const { helmetInstances, setHelmet } = context;
-    let serverState: HelmetServerState | null = null;
-    const state = reducePropsToState(helmetInstances.get().map((instance) => ({ ...instance })));
-    if (Provider.canUseDOM) {
-      handleStateChangeOnClient(state);
-    } else if (mapStateOnServer) {
-      serverState = mapStateOnServer(state);
-    }
-    setHelmet(serverState);
+    if ('setHelmet' in context) {
+      const { helmetInstances, setHelmet } = context;
+      let serverState: HelmetServerState | null = null;
+      const state = reducePropsToState(helmetInstances.get().map((instance) => ({ ...instance })));
 
-    return () => {
-      const { helmetInstances } = context;
-      helmetInstances.remove(this);
-    };
-  }, []);
+      if (canUseDOM) {
+        handleStateChangeOnClient(state);
+      } else {
+        serverState = mapStateOnServer(state);
+      }
+      setHelmet(serverState);
+    }
+  }, [canUseDOM, context]);
 
   const init = React.useCallback(() => {
-    if (rendered) {
-      return;
+    if (!rendered) {
+      setRendered(true);
+
+      if ('helmetInstances' in context) {
+        const { helmetInstances } = context;
+        helmetInstances.add(restProps);
+        emitChange();
+      }
     }
+  }, [context, emitChange, rendered, restProps]);
 
-    setRendered(true);
+  React.useEffect(() => {
+    init();
+  }, [init]);
 
-    const { helmetInstances } = context;
-    helmetInstances.add(this);
+  React.useEffect(() => {
     emitChange();
-  }, []);
-
-  init();
+    return () => {
+      if ('helmetInstances' in context) {
+        const { helmetInstances } = context;
+        helmetInstances.remove(restProps);
+      }
+    };
+  }, [context, emitChange, restProps]);
 
   return null;
 };

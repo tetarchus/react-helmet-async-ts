@@ -1,27 +1,109 @@
+import type { HELMET_ATTRIBUTE } from './constants';
 import type { HelmetData } from './HelmetData';
 
+/** TODO: Remove these and replace with global type import */
+type ArrayType<T> = T extends Array<infer U> | ReadonlyArray<infer U> ? U : T;
+type EmptyObject = Record<never, never>;
+type ObjectValues<T extends Record<PropertyKey, unknown>, K extends PropertyKey = keyof T> = T[K];
+type ObjectValuesArray<T extends Record<PropertyKey, unknown>> = Array<ObjectValues<T>>;
+/** END */
+
+type InitProps = {
+  key?: number | string;
+  [HELMET_ATTRIBUTE]?: boolean;
+};
+
+type TagTypeMap = {
+  base: Partial<HTMLBaseElement>;
+  body: Partial<HTMLBodyElement>;
+  bodyAttributes: Partial<HTMLBodyElement>;
+  html: Partial<HTMLHtmlElement>;
+  htmlAttributes: Partial<HTMLHtmlElement>;
+  link: Partial<HTMLLinkElement>;
+  meta: Partial<HTMLMetaElement>;
+  noscript: Partial<HTMLElement>;
+  script: Partial<HTMLScriptElement>;
+  style: Partial<HTMLStyleElement>;
+  title: Partial<HTMLTitleElement>;
+};
+
+type UpdatedTags = { oldTags: Element[]; newTags: Element[] };
+
+type CheckedUpdatedTags = { updatedOldTags: Element[]; updatedNewTags: Element[] };
+
+type HelmetDatum = {
+  toComponent: () => Array<React.ReactElement<InitProps>>;
+  toString: () => string;
+};
+
+type HelmetHTMLBodyDatum = {
+  toComponent: () => HelmetProps['bodyAttributes'] & InitProps;
+  toString: () => string;
+};
+
+type HelmetHTMLElementDatum = {
+  toComponent: () => HelmetProps['htmlAttributes'] & InitProps;
+  toString: () => string;
+};
+
+type HelmetServerState = {
+  base: HelmetDatum;
+  bodyAttributes: HelmetHTMLBodyDatum;
+  htmlAttributes: HelmetHTMLElementDatum;
+  link: HelmetDatum;
+  meta: HelmetDatum;
+  noscript: HelmetDatum;
+  script: HelmetDatum;
+  style: HelmetDatum;
+  title: HelmetDatum;
+  priority: HelmetDatum;
+};
+
+type HelmetDataContext = {
+  helmet?: HelmetServerState | null;
+};
+
 type HelmetProps = {
-  base?: Partial<HTMLBaseElement> | undefined;
-  bodyAttributes?: Partial<HTMLBodyElement> | undefined;
+  base?: TagTypeMap['base'] | undefined;
+  bodyAttributes?: TagTypeMap['body'] | undefined;
   children?: React.ReactNode;
   defaultTitle?: string | undefined;
   defer?: boolean | undefined;
   encodeSpecialCharacters?: boolean | undefined;
-  helmetData?: HelmetData | undefined;
-  htmlAttributes?: Partial<HTMLHtmlElement> | undefined;
-  link?: Array<Partial<HTMLLinkElement>> | undefined;
-  meta?: Array<Partial<HTMLMetaElement>> | undefined;
-  noscript?: Array<Partial<HTMLElement>> | undefined;
-  onChangeClientState?: (() => void) | undefined;
+  helmetData?: HelmetData | { context: HelmetDataContext; instances: HelmetProps[] } | undefined;
+  htmlAttributes?: TagTypeMap['html'] | undefined;
+  link?: Array<TagTypeMap['link']> | undefined;
+  meta?: Array<TagTypeMap['meta']> | undefined;
+  noscript?: Array<TagTypeMap['noscript']> | undefined;
+  onChangeClientState?:
+    | ((
+        newState: HelmetState,
+        addedTags: Record<string, HTMLElement[]>,
+        removedTags: Record<string, HTMLElement[]>,
+      ) => void)
+    | undefined;
   prioritizeSeoTags?: boolean | undefined;
-  script?: Array<Partial<HTMLScriptElement>> | undefined;
-  style?: Array<Partial<HTMLStyleElement>> | undefined;
+  script?: Array<TagTypeMap['script']> | undefined;
+  style?: Array<TagTypeMap['style']> | undefined;
   title?: string | undefined;
-  titleAttributes?: Partial<HTMLTitleElement> | undefined;
+  titleAttributes?: TagTypeMap['title'] | undefined;
   titleTemplate?: string | undefined;
 };
 
 type HelmetPropsWithoutChildren = Omit<HelmetProps, 'children'>;
+
+type TitleTags = { title: HelmetProps['title']; titleAttributes: HelmetProps['titleAttributes'] };
+
+type HelmetTags<T extends keyof HelmetProps> =
+  | Array<ArrayType<NonNullable<HelmetProps[T]>>>
+  | ArrayType<NonNullable<HelmetProps[T]>>;
+
+type MethodTags<T extends keyof HelmetProps> = T extends 'title' ? TitleTags : HelmetTags<T>;
+
+type Prioritizer<T extends 'link' | 'meta' | 'script'> = {
+  default: Array<ArrayType<NonNullable<HelmetProps[T]>>>;
+  priority: Array<ArrayType<NonNullable<HelmetProps[T]>>>;
+};
 
 type ArrayTypeChildren = Record<string, unknown>;
 
@@ -38,118 +120,81 @@ type ObjectTypeChildrenArgs = {
   newChildProps: Record<string, unknown>;
   nestedChildren: React.ReactNode;
 };
-/**
-   * Provider Prop Types
-    static propTypes = {
-    context: PropTypes.shape({
-      helmet: PropTypes.shape(),
-    }),
-    children: PropTypes.node.isRequired,
-  };
 
-  export const providerShape = PropTypes.shape({
-  setHelmet: PropTypes.func,
-  helmetInstances: PropTypes.shape({
-    get: PropTypes.func,
-    add: PropTypes.func,
-    remove: PropTypes.func,
-  }),
-});
-   */
-
-// interface OtherElementAttributes {
-//   [key: string]: string | number | boolean | null | undefined;
-// }
-
-// type HtmlProps = JSX.IntrinsicElements['html'] & OtherElementAttributes;
-
-// type BodyProps = JSX.IntrinsicElements['body'] & OtherElementAttributes;
-
-// type LinkProps = JSX.IntrinsicElements['link'];
-
-// type MetaProps = JSX.IntrinsicElements['meta'];
-
-// export interface HelmetTags {
-//   baseTag: Array<any>;
-//   linkTags: Array<HTMLLinkElement>;
-//   metaTags: Array<HTMLMetaElement>;
-//   noscriptTags: Array<any>;
-//   scriptTags: Array<HTMLScriptElement>;
-//   styleTags: Array<HTMLStyleElement>;
-// }
-
-// export interface HelmetProps {
-//   async?: boolean;
-//   base?: any;
-//   bodyAttributes?: BodyProps;
-//   defaultTitle?: string;
-//   defer?: boolean;
-//   encodeSpecialCharacters?: boolean;
-//   helmetData?: HelmetData;
-//   htmlAttributes?: HtmlProps;
-//   onChangeClientState?: (newState: any, addedTags: HelmetTags, removedTags: HelmetTags) => void;
-//   link?: LinkProps[];
-//   meta?: MetaProps[];
-//   noscript?: Array<any>;
-//   script?: Array<any>;
-//   style?: Array<any>;
-//   title?: string;
-//   titleAttributes?: Object;
-//   titleTemplate?: string;
-//   prioritizeSeoTags?: boolean;
-// }
-
-type HelmetDatum = {
-  toString: () => string;
-  toComponent: () => React.Component;
+type HelmetState = {
+  baseTag: HelmetProps['base'];
+  bodyAttributes: HelmetProps['bodyAttributes'];
+  defer?: HelmetProps['defer'];
+  encode: HelmetProps['encodeSpecialCharacters'];
+  htmlAttributes: HelmetProps['htmlAttributes'];
+  linkTags: HelmetProps['link'];
+  metaTags: HelmetProps['meta'];
+  noscriptTags: HelmetProps['noscript'];
+  onChangeClientState?: HelmetProps['onChangeClientState'];
+  prioritizeSeoTags?: HelmetProps['prioritizeSeoTags'];
+  scriptTags: HelmetProps['script'];
+  styleTags: HelmetProps['style'];
+  title?: HelmetProps['title'];
+  titleAttributes: HelmetProps['titleAttributes'];
 };
 
-type HelmetHTMLBodyDatum = {
-  toString: () => string;
-  toComponent: () => React.HTMLAttributes<HTMLBodyElement>;
+type DispatcherContext = HelmetData['value'] & HelmetDataContext;
+
+type HelmetProviderProps = {
+  children?: React.ReactNode;
+  context?: DispatcherContext | EmptyObject;
 };
 
-type HelmetHTMLElementDatum = {
-  toString: () => string;
-  toComponent: () => React.HTMLAttributes<HTMLHtmlElement>;
+type PriorityMethodsArgs = {
+  encode: HelmetState['encode'];
+  metaTags: HelmetState['metaTags'];
+  linkTags: HelmetState['linkTags'];
+  scriptTags: HelmetState['scriptTags'];
 };
 
-type HelmetServerState = {
-  base: HelmetDatum;
-  bodyAttributes: HelmetHTMLBodyDatum;
-  htmlAttributes: HelmetHTMLElementDatum;
-  link: HelmetDatum;
-  meta: HelmetDatum;
-  noscript: HelmetDatum;
-  script: HelmetDatum;
-  style: HelmetDatum;
-  title: HelmetDatum;
-  // titleAttributes: HelmetDatum;
-  priority: HelmetDatum;
+type PriorityMethods = {
+  priorityMethods: HelmetDatum;
+  linkTagDefaults: Prioritizer<'link'>['default'];
+  metaTagDefaults: Prioritizer<'meta'>['default'];
+  scriptTagDefaults: Prioritizer<'script'>['default'];
 };
 
-type HelmetDataContext = {
-  helmet?: HelmetServerState;
+type HelmetContextValue = {
+  canUseDOM: boolean;
+  context: DispatcherContext | EmptyObject;
 };
 
-type DispatcherContext = HelmetData['value'];
-
-type DispatcherProps = {
-  context: DispatcherContext;
+type DispatcherProps = HelmetProps & {
+  context: DispatcherContext | EmptyObject;
 };
-
-// export class HelmetProvider extends React.Component<React.PropsWithChildren<ProviderProps>> {
-//   static canUseDOM: boolean;
-// }
-// }
 
 export type {
+  ArrayType,
   ArrayTypeChildren,
   ArrayTypeChildrenArgs,
+  CheckedUpdatedTags,
+  DispatcherContext,
   DispatcherProps,
+  EmptyObject,
+  HelmetContextValue,
   HelmetDataContext,
+  HelmetDatum,
+  HelmetHTMLBodyDatum,
+  HelmetHTMLElementDatum,
   HelmetProps,
   HelmetPropsWithoutChildren,
+  HelmetProviderProps,
   HelmetServerState,
+  HelmetState,
+  HelmetTags,
+  InitProps,
+  MethodTags,
   ObjectTypeChildrenArgs,
+  ObjectValues,
+  ObjectValuesArray,
+  Prioritizer,
+  PriorityMethods,
+  PriorityMethodsArgs,
+  TagTypeMap,
+  UpdatedTags,
 };

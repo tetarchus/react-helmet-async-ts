@@ -1,30 +1,30 @@
 import { mapStateOnServer } from './server';
 
-import type { HelmetDataContext, HelmetServerState } from './types';
+import type { HelmetDataContext, HelmetProps, HelmetServerState } from './types';
 
-const domInstances = [];
+const domInstances: HelmetProps[] = [];
 
 const clearInstances = (): void => {
   domInstances.length = 0;
 };
 
 class HelmetData {
-  public readonly instances = [];
+  public readonly instances: HelmetProps[] = [];
 
   public canUseDOM: boolean;
 
-  public context: HelmetDataContext;
+  public context: HelmetDataContext = {};
 
   public readonly value = {
-    setHelmet: (serverState: HelmetServerState): void => {
+    setHelmet: (serverState: HelmetServerState | null): void => {
       this.context.helmet = serverState;
     },
     helmetInstances: {
-      get: () => (this.canUseDOM ? domInstances : this.instances),
-      add: (instance): void => {
+      get: (): HelmetProps[] => (this.canUseDOM ? domInstances : this.instances),
+      add: (instance: HelmetProps): void => {
         (this.canUseDOM ? domInstances : this.instances).push(instance);
       },
-      remove: (instance): void => {
+      remove: (instance: HelmetProps): void => {
         const index = (this.canUseDOM ? domInstances : this.instances).indexOf(instance);
         (this.canUseDOM ? domInstances : this.instances).splice(index, 1);
       },
@@ -37,9 +37,9 @@ class HelmetData {
 
     if (!canUseDOM) {
       this.context.helmet = mapStateOnServer({
-        baseTag: [],
+        baseTag: {},
         bodyAttributes: {},
-        encodeSpecialCharacters: true,
+        encode: true,
         htmlAttributes: {},
         linkTags: [],
         metaTags: [],

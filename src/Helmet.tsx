@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Dispatcher } from './Dispatcher';
+import { HelmetContext } from './HelmetContext';
 import { HelmetData } from './HelmetData';
-import { Context } from './Provider';
 import { mapChildrenToProps } from './utils';
 
 import type { HelmetProps, HelmetPropsWithoutChildren } from './types';
@@ -53,15 +53,15 @@ const Helmet: React.FC<HelmetProps> = ({
   }
 
   if (data != null && !(data instanceof HelmetData)) {
-    data = new HelmetData(data.context, data.instances);
+    data = new HelmetData(data.context);
   }
 
-  return helmetData ? (
-    <Dispatcher {...newProps} context={helmetData.value} helmetData={undefined} />
+  return data instanceof HelmetData ? (
+    <Dispatcher {...newProps} context={data.value} helmetData={undefined} />
   ) : (
-    <Context.Consumer>
-      {(context): JSX.Element => <Dispatcher {...newProps} context={context} />}
-    </Context.Consumer>
+    <HelmetContext.Consumer>
+      {(value): JSX.Element => <Dispatcher {...newProps} context={value.context} />}
+    </HelmetContext.Consumer>
   );
 };
 
