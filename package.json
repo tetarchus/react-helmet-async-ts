@@ -21,7 +21,8 @@
     "prop-types": "^15.7.2",
     "react-fast-compare": "^3.2.0",
     "react-is": "^18.1.0",
-    "shallowequal": "^1.1.0"
+    "shallowequal": "^1.1.0",
+    "ssr-window": "^4.0.2"
   },
   "devDependencies": {
     "@babel/cli": "7.17.10",
