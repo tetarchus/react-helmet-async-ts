@@ -1,12 +1,11 @@
 import type { HELMET_ATTRIBUTE } from './constants';
 import type { HelmetData } from './HelmetData';
+import type React from 'react';
 
-/** TODO: Remove these and replace with global type import */
 type ArrayType<T> = T extends Array<infer U> | ReadonlyArray<infer U> ? U : T;
 type EmptyObject = Record<never, never>;
 type ObjectValues<T extends Record<PropertyKey, unknown>, K extends PropertyKey = keyof T> = T[K];
 type ObjectValuesArray<T extends Record<PropertyKey, unknown>> = Array<ObjectValues<T>>;
-/** END */
 
 type InitProps = {
   key?: number | string;

@@ -26,9 +26,9 @@ import type {
   TagTypeMap,
 } from './types';
 
-// TODO: Move to utils - type-safe replacement
 const isArray = <T>(arg: Iterable<T> | unknown | null | undefined): arg is T[] =>
   Array.isArray(arg);
+
 const includes = <U, T extends U>(arr: ReadonlyArray<T>, el: U): el is T => arr.includes(el as T);
 
 const getInnermostProperty = <T extends keyof HelmetPropsWithoutChildren>(
@@ -331,7 +331,7 @@ const flattenArrayTypeChildren = ({
   newChildProps,
   nestedChildren,
 }: ArrayTypeChildrenArgs): Record<string, unknown> => {
-  const flattenedChild = arrayTypeChildren[child.type.toString()];
+  const ignoredFlattenedChild = arrayTypeChildren[child.type.toString()];
   return {
     ...arrayTypeChildren,
     [child.type.toString()]: [
