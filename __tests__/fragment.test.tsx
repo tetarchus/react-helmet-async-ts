@@ -1,33 +1,29 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Helmet } from '../src';
-import Provider from '../src/Provider';
 
-Helmet.defaultProps.defer = false;
+import { Helmet } from '..';
 
-const mount = document.getElementById('mount');
+import { render } from './setup/testSetup';
 
-const render = node => {
-  ReactDOM.render(<Provider>{node}</Provider>, mount);
-};
-
-describe('fragments', () => {
+describe('React.Fragments', () => {
   it('parses Fragments', () => {
+    expect.assertions(1);
     render(
-      <Helmet>
+      <Helmet defer={false}>
         <>
           <title>Hello</title>
-          <meta charSet="utf-8" />
+          <meta charSet='utf-8' />
         </>
-      </Helmet>
+      </Helmet>,
     );
 
     expect(document.title).toMatchSnapshot();
   });
 
   it('parses nested Fragments', () => {
+    expect.assertions(1);
+
     render(
-      <Helmet>
+      <Helmet defer={false}>
         <>
           <title>Foo</title>
           <>
@@ -35,7 +31,7 @@ describe('fragments', () => {
             <title>Baz</title>
           </>
         </>
-      </Helmet>
+      </Helmet>,
     );
 
     expect(document.title).toMatchSnapshot();

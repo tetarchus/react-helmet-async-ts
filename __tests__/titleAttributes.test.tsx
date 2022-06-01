@@ -1,49 +1,59 @@
 import React from 'react';
-import { Helmet } from '../../src';
-import { HELMET_ATTRIBUTE } from '../../src/constants';
-import { render } from './utils';
 
-Helmet.defaultProps.defer = false;
+import { Helmet } from '..';
 
-describe('title attributes', () => {
+import { HELMET_ATTRIBUTE } from '../components/constants';
+
+import { after, before, render } from './setup/testSetup';
+
+describe('<title> attributes', () => {
   beforeEach(() => {
+    before();
     document.head.innerHTML = `<title>Test Title</title>`;
   });
+  afterEach(after);
 
   describe('API', () => {
-    it('update title attributes', () => {
+    it('updates title attributes', () => {
+      expect.assertions(2);
+
       render(
         <Helmet
+          defer={false}
           titleAttributes={{
             itemprop: 'name',
           }}
-        />
+        />,
       );
 
-      const titleTag = document.getElementsByTagName('title')[0];
+      const titleTag = document.querySelectorAll('title')[0];
 
       expect(titleTag.getAttribute('itemprop')).toBe('name');
       expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).toBe('itemprop');
     });
 
     it('sets attributes based on the deepest nested component', () => {
+      expect.assertions(3);
+
       render(
         <div>
           <Helmet
+            defer={false}
             titleAttributes={{
               lang: 'en',
               hidden: undefined,
             }}
           />
           <Helmet
+            defer={false}
             titleAttributes={{
               lang: 'ja',
             }}
           />
-        </div>
+        </div>,
       );
 
-      const titleTag = document.getElementsByTagName('title')[0];
+      const titleTag = document.querySelectorAll('title')[0];
 
       expect(titleTag.getAttribute('lang')).toBe('ja');
       expect(titleTag.getAttribute('hidden')).toBe('');
@@ -51,33 +61,39 @@ describe('title attributes', () => {
     });
 
     it('handles valueless attributes', () => {
+      expect.assertions(2);
+
       render(
         <Helmet
+          defer={false}
           titleAttributes={{
             hidden: undefined,
           }}
-        />
+        />,
       );
 
-      const titleTag = document.getElementsByTagName('title')[0];
+      const titleTag = document.querySelectorAll('title')[0];
 
       expect(titleTag.getAttribute('hidden')).toBe('');
       expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).toBe('hidden');
     });
 
     it('clears title attributes that are handled within helmet', () => {
+      expect.assertions(3);
+
       render(
         <Helmet
+          defer={false}
           titleAttributes={{
             lang: 'en',
             hidden: undefined,
           }}
-        />
+        />,
       );
 
-      render(<Helmet />);
+      render(<Helmet defer={false} />);
 
-      const titleTag = document.getElementsByTagName('title')[0];
+      const titleTag = document.querySelectorAll('title')[0];
 
       expect(titleTag.getAttribute('lang')).toBeNull();
       expect(titleTag.getAttribute('hidden')).toBeNull();
@@ -87,31 +103,35 @@ describe('title attributes', () => {
 
   describe('Declarative API', () => {
     it('updates title attributes', () => {
+      expect.assertions(2);
+
       render(
-        <Helmet>
-          <title itemProp="name" />
-        </Helmet>
+        <Helmet defer={false}>
+          <title itemProp='name' />
+        </Helmet>,
       );
 
-      const titleTag = document.getElementsByTagName('title')[0];
+      const titleTag = document.querySelectorAll('title')[0];
 
       expect(titleTag.getAttribute('itemprop')).toBe('name');
       expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).toBe('itemprop');
     });
 
     it('sets attributes based on the deepest nested component', () => {
+      expect.assertions(3);
+
       render(
         <div>
-          <Helmet>
-            <title lang="en" hidden />
+          <Helmet defer={false}>
+            <title lang='en' hidden />
           </Helmet>
-          <Helmet>
-            <title lang="ja" />
+          <Helmet defer={false}>
+            <title lang='ja' />
           </Helmet>
-        </div>
+        </div>,
       );
 
-      const titleTag = document.getElementsByTagName('title')[0];
+      const titleTag = document.querySelectorAll('title')[0];
 
       expect(titleTag.getAttribute('lang')).toBe('ja');
       expect(titleTag.getAttribute('hidden')).toBe('true');
@@ -119,28 +139,32 @@ describe('title attributes', () => {
     });
 
     it('handles valueless attributes', () => {
+      expect.assertions(2);
+
       render(
-        <Helmet>
+        <Helmet defer={false}>
           <title hidden />
-        </Helmet>
+        </Helmet>,
       );
 
-      const titleTag = document.getElementsByTagName('title')[0];
+      const titleTag = document.querySelectorAll('title')[0];
 
       expect(titleTag.getAttribute('hidden')).toBe('true');
       expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).toBe('hidden');
     });
 
     it('clears title attributes that are handled within helmet', () => {
+      expect.assertions(3);
+
       render(
-        <Helmet>
-          <title lang="en" hidden />
-        </Helmet>
+        <Helmet defer={false}>
+          <title lang='en' hidden />
+        </Helmet>,
       );
 
-      render(<Helmet />);
+      render(<Helmet defer={false} />);
 
-      const titleTag = document.getElementsByTagName('title')[0];
+      const titleTag = document.querySelectorAll('title')[0];
 
       expect(titleTag.getAttribute('lang')).toBeNull();
       expect(titleTag.getAttribute('hidden')).toBeNull();
