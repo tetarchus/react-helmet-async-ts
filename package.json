@@ -18,6 +18,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "invariant": "^2.2.4",
+    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react-fast-compare": "^3.2.0",
     "react-is": "^18.1.0",
@@ -32,6 +33,7 @@
     "@commitlint/cli": "17.0.0",
     "@commitlint/config-conventional": "17.0.0",
     "@types/invariant": "^2.2.35",
+    "@types/lodash": "^4.14.182",
     "@types/react": "^18.0.9",
     "@types/react-is": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
