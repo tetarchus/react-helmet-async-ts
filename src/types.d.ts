@@ -8,22 +8,41 @@ type ObjectValues<T extends Record<PropertyKey, unknown>, K extends PropertyKey 
 type ObjectValuesArray<T extends Record<PropertyKey, unknown>> = Array<ObjectValues<T>>;
 
 type InitProps = {
-  key?: number | string;
+  key?: number | string | null | undefined;
   [HELMET_ATTRIBUTE]?: boolean;
 };
 
+type HTMLElementAttributes = JSX.IntrinsicElements['html'] &
+  React.DataHTMLAttributes &
+  React.HTMLAttributes<HTMLHtmlElement> & {
+    amp?: boolean | undefined;
+    class?: string;
+  };
+
 type TagTypeMap = {
   base: Partial<HTMLBaseElement>;
-  body: Partial<HTMLBodyElement>;
-  bodyAttributes: Partial<HTMLBodyElement>;
-  html: Partial<HTMLHtmlElement>;
-  htmlAttributes: Partial<HTMLHtmlElement>;
+  body: Partial<JSX.IntrinsicElements['body']>;
+  bodyAttributes: Partial<JSX.IntrinsicElements['body']>;
+  html: Partial<HTMLElementAttributes>;
+  htmlAttributes: Partial<HTMLElementAttributes>;
   link: Partial<HTMLLinkElement>;
-  meta: Partial<HTMLMetaElement>;
+  meta: Partial<
+    HTMLMetaElement & {
+      charset?: string;
+      'http-equiv':
+        | 'content-security-policy'
+        | 'content-type'
+        | 'default-style'
+        | 'refresh'
+        | 'x-ua-compatible';
+      property?: string;
+      itemprop?: string;
+    }
+  >;
   noscript: Partial<HTMLElement>;
   script: Partial<HTMLScriptElement>;
-  style: Partial<HTMLStyleElement>;
-  title: Partial<HTMLTitleElement>;
+  style: Partial<HTMLStyleElement & { cssText?: string }>;
+  title: Partial<JSX.IntrinsicElements['title'] & { itemprop?: string }>;
 };
 
 type UpdatedTags = { oldTags: Element[]; newTags: Element[] };
@@ -63,41 +82,33 @@ type HelmetDataContext = {
 };
 
 type HelmetProps = {
-  base?: TagTypeMap['base'] | undefined;
-  bodyAttributes?: TagTypeMap['body'] | undefined;
+  base: TagTypeMap['base'] | undefined;
+  bodyAttributes: TagTypeMap['body'] | undefined;
   children?: React.ReactNode;
-  defaultTitle?: string | undefined;
-  defer?: boolean | undefined;
-  encodeSpecialCharacters?: boolean | undefined;
-  helmetData?: HelmetData | { context: HelmetDataContext; instances: HelmetProps[] } | undefined;
-  htmlAttributes?: TagTypeMap['html'] | undefined;
-  link?: Array<TagTypeMap['link']> | undefined;
-  meta?: Array<TagTypeMap['meta']> | undefined;
-  noscript?: Array<TagTypeMap['noscript']> | undefined;
-  onChangeClientState?:
+  defaultTitle: string | undefined;
+  defer: boolean;
+  encodeSpecialCharacters: boolean;
+  helmetData: HelmetData | { context: HelmetDataContext; instances: HelmetProps[] } | undefined;
+  htmlAttributes: TagTypeMap['html'] | undefined;
+  link: Array<TagTypeMap['link']> | undefined;
+  meta: Array<TagTypeMap['meta']> | undefined;
+  noscript: Array<TagTypeMap['noscript']> | undefined;
+  onChangeClientState:
     | ((
         newState: HelmetState,
         addedTags: Record<string, HTMLElement[]>,
         removedTags: Record<string, HTMLElement[]>,
       ) => void)
     | undefined;
-  prioritizeSeoTags?: boolean | undefined;
-  script?: Array<TagTypeMap['script']> | undefined;
-  style?: Array<TagTypeMap['style']> | undefined;
-  title?: string | undefined;
-  titleAttributes?: TagTypeMap['title'] | undefined;
-  titleTemplate?: string | undefined;
+  prioritizeSeoTags: boolean;
+  script: Array<TagTypeMap['script']> | undefined;
+  style: Array<TagTypeMap['style']> | undefined;
+  title: string | undefined;
+  titleAttributes: TagTypeMap['title'] | undefined;
+  titleTemplate: string | undefined;
 };
 
 type HelmetPropsWithoutChildren = Omit<HelmetProps, 'children'>;
-
-type TitleTags = { title: HelmetProps['title']; titleAttributes: HelmetProps['titleAttributes'] };
-
-type HelmetTags<T extends keyof HelmetProps> =
-  | Array<ArrayType<NonNullable<HelmetProps[T]>>>
-  | ArrayType<NonNullable<HelmetProps[T]>>;
-
-type MethodTags<T extends keyof HelmetProps> = T extends 'title' ? TitleTags : HelmetTags<T>;
 
 type Prioritizer<T extends 'link' | 'meta' | 'script'> = {
   default: Array<ArrayType<NonNullable<HelmetProps[T]>>>;
@@ -120,10 +131,24 @@ type ObjectTypeChildrenArgs = {
   nestedChildren: React.ReactNode;
 };
 
+type TagMap = {
+  base: 'baseTag';
+  body: 'bodyAttributes';
+  bodyAttributes: 'bodyAttributes';
+  html: 'htmlAttributes';
+  htmlAttributes: 'htmlAttributes';
+  link: 'linkTags';
+  meta: 'metaTags';
+  noscript: 'noscriptTags';
+  script: 'scriptTags';
+  style: 'styleTags';
+  title: 'title';
+};
+
 type HelmetState = {
-  baseTag: HelmetProps['base'];
+  baseTag: Array<HelmetProps['base']>;
   bodyAttributes: HelmetProps['bodyAttributes'];
-  defer?: HelmetProps['defer'];
+  defer: HelmetProps['defer'];
   encode: HelmetProps['encodeSpecialCharacters'];
   htmlAttributes: HelmetProps['htmlAttributes'];
   linkTags: HelmetProps['link'];
@@ -137,11 +162,16 @@ type HelmetState = {
   titleAttributes: HelmetProps['titleAttributes'];
 };
 
+type TitleTags = { title: HelmetProps['title']; titleAttributes: HelmetProps['titleAttributes'] };
+
 type DispatcherContext = HelmetData['value'] & HelmetDataContext;
+
+type HelmetContext = DispatcherContext | EmptyObject;
 
 type HelmetProviderProps = {
   children?: React.ReactNode;
-  context?: DispatcherContext | EmptyObject;
+  context?: HelmetContext;
+  ssr?: boolean;
 };
 
 type PriorityMethodsArgs = {
@@ -160,11 +190,11 @@ type PriorityMethods = {
 
 type HelmetContextValue = {
   canUseDOM: boolean;
-  context: DispatcherContext | EmptyObject;
+  context: HelmetContext;
 };
 
 type DispatcherProps = HelmetProps & {
-  context: DispatcherContext | EmptyObject;
+  context: HelmetContext;
 };
 
 export type {
@@ -172,9 +202,8 @@ export type {
   ArrayTypeChildren,
   ArrayTypeChildrenArgs,
   CheckedUpdatedTags,
-  DispatcherContext,
   DispatcherProps,
-  EmptyObject,
+  HelmetContext,
   HelmetContextValue,
   HelmetDataContext,
   HelmetDatum,
@@ -185,15 +214,15 @@ export type {
   HelmetProviderProps,
   HelmetServerState,
   HelmetState,
-  HelmetTags,
   InitProps,
-  MethodTags,
   ObjectTypeChildrenArgs,
   ObjectValues,
   ObjectValuesArray,
   Prioritizer,
   PriorityMethods,
   PriorityMethodsArgs,
+  TagMap,
   TagTypeMap,
+  TitleTags,
   UpdatedTags,
 };

@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { getDocument } from 'ssr-window';
 
 import { HELMET_ATTRIBUTE, TAG_NAMES, TAG_PROPERTIES } from './constants';
@@ -9,6 +10,7 @@ import type {
   HelmetProps,
   HelmetState,
   ObjectValues,
+  TagMap,
   UpdatedTags,
 } from './types';
 
@@ -47,42 +49,46 @@ const updateTags = <
   >,
 >(
   type: T,
-  tags: HelmetProps[T],
+  tags: HelmetState[TagMap[T]],
 ): UpdatedTags => {
   const headElement = doc.head;
   const tagNodes = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
   let oldTags = Array.prototype.slice.call(tagNodes) as Element[];
   let newTags = [] as Element[];
 
-  if (tags != null && 'length' in tags && isArray(tags) && tags.length > 0) {
-    for (const tag of tags) {
-      const currentTag = tag as ArrayType<NonNullable<HelmetProps[T]>>;
-      const newElement = document.createElement(type);
+  const parseTag = (tag: HelmetState[TagMap[T]]): void => {
+    const currentTag = tag as ArrayType<NonNullable<HelmetProps[T]>>;
+    const newElement = doc.createElement(type);
 
-      for (const attribute of Object.keys(currentTag)) {
-        if (Object.prototype.hasOwnProperty.call(currentTag, attribute)) {
-          if (attribute === TAG_PROPERTIES.INNER_HTML) {
-            newElement.innerHTML = currentTag.innerHTML ?? '';
-          } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {
-            if (newElement.styleSheet != null) {
-              newElement.styleSheet.cssText = (currentTag.cssText as string | undefined) ?? '';
-            } else {
-              newElement.append(document.createTextNode(currentTag.cssText));
-            }
-          } else {
-            const value = (currentTag[attribute] as string | undefined) ?? '';
-            newElement.setAttribute(attribute, value);
-          }
+    for (const attribute of Object.keys(currentTag)) {
+      if (Object.prototype.hasOwnProperty.call(currentTag, attribute)) {
+        if (attribute === TAG_PROPERTIES.INNER_HTML) {
+          newElement.innerHTML = currentTag.innerHTML ?? '';
+        } else if (attribute === TAG_PROPERTIES.CSS_TEXT && 'cssText' in currentTag) {
+          newElement.append(doc.createTextNode(currentTag.cssText));
+        } else {
+          const value = (currentTag[attribute] as string | undefined) ?? '';
+          newElement.setAttribute(attribute, value);
         }
       }
-
-      newElement.setAttribute(HELMET_ATTRIBUTE, 'true');
-
-      // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
-      const { updatedOldTags, updatedNewTags } = checkRemoval(oldTags, newTags, newElement);
-      oldTags = [...updatedOldTags];
-      newTags = [...updatedNewTags];
     }
+
+    newElement.setAttribute(HELMET_ATTRIBUTE, 'true');
+
+    // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
+    const { updatedOldTags, updatedNewTags } = checkRemoval(oldTags, newTags, newElement);
+    oldTags = [...updatedOldTags];
+    newTags = [...updatedNewTags];
+  };
+
+  if (isArray(tags)) {
+    if (tags.length > 0) {
+      for (const tag of tags) {
+        parseTag(tag as HelmetState[TagMap[T]]);
+      }
+    }
+  } else {
+    parseTag(tags);
   }
 
   for (const tag of oldTags) tag.remove();
@@ -96,9 +102,12 @@ const updateTags = <
 
 const updateAttributes = <T extends ObjectValues<typeof TAG_NAMES>>(
   tagName: T,
-  attributes: HelmetState['bodyAttributes'] | HelmetState['htmlAttributes'],
+  attributes:
+    | HelmetProps['titleAttributes']
+    | HelmetState['bodyAttributes']
+    | HelmetState['htmlAttributes'],
 ): void => {
-  const elementTag = document.querySelectorAll(tagName)[0] as Element | undefined;
+  const elementTag = doc.querySelectorAll(tagName)[0] as Element | undefined;
   const elementAttributes = { ...attributes };
 
   if (elementTag != null) {
@@ -140,8 +149,8 @@ const updateTitle = (
   title: HelmetState['title'],
   attributes: HelmetState['titleAttributes'],
 ): void => {
-  if (typeof title !== 'undefined' && document.title !== title) {
-    document.title = flattenArray(title);
+  if (doc.title !== title) {
+    doc.title = flattenArray(title ?? '');
   }
 
   updateAttributes(TAG_NAMES.TITLE, attributes);
@@ -191,7 +200,9 @@ const commitTagChanges = (newState: HelmetState, cb?: () => void): void => {
 
   cb?.();
 
-  onChangeClientState?.(newState, addedTags, removedTags);
+  if (!isEmpty(addedTags) || !isEmpty(removedTags)) {
+    onChangeClientState?.(newState, addedTags, removedTags);
+  }
 };
 
 let _helmetCallback: number | null = null;
@@ -201,7 +212,7 @@ const handleStateChangeOnClient = (newState: HelmetState): void => {
     cancelAnimationFrame(_helmetCallback);
   }
 
-  if (newState.defer ?? false) {
+  if (newState.defer) {
     _helmetCallback = requestAnimationFrame(() => {
       commitTagChanges(newState, () => {
         _helmetCallback = null;

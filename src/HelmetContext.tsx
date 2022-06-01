@@ -14,10 +14,13 @@ const HelmetContext: React.Context<HelmetContextValue> = React.createContext(def
 const HelmetContextProvider: React.FC<HelmetProviderProps> = ({
   children,
   context = defaultValue.context,
+  ssr,
 }: HelmetProviderProps) => {
-  const { canUseDOM } = React.useContext(HelmetContext);
+  const { canUseDOM: contextCUD } = React.useContext(HelmetContext);
+  // Allows override to 'canUseDOM'
+  const canUseDOM = ssr != null ? !ssr : contextCUD;
   const contextValue = React.useMemo(
-    () => ({ canUseDOM, context: new HelmetData(context, canUseDOM) }),
+    () => ({ canUseDOM, context: new HelmetData(context, canUseDOM).value }),
     [canUseDOM, context],
   );
 

@@ -11,13 +11,18 @@ const Dispatcher: React.FC<DispatcherProps> = (props: DispatcherProps) => {
   const [rendered, setRendered] = React.useState(false);
   const { canUseDOM } = React.useContext(HelmetContext);
   const { context, ...restProps } = props;
+  const [currentProps] = React.useState({ context, restProps });
 
   const emitChange = React.useCallback(() => {
-    if ('setHelmet' in context) {
-      const { helmetInstances, setHelmet } = context;
+    if ('setHelmet' in currentProps.context) {
+      const { helmetInstances, setHelmet } = currentProps.context;
       let serverState: HelmetServerState | null = null;
-      const state = reducePropsToState(helmetInstances.get().map((instance) => ({ ...instance })));
-
+      const state = reducePropsToState(
+        helmetInstances
+          .get()
+          .map((instance) => ({ ...instance }))
+          .reverse(),
+      );
       if (canUseDOM) {
         handleStateChangeOnClient(state);
       } else {
@@ -25,33 +30,33 @@ const Dispatcher: React.FC<DispatcherProps> = (props: DispatcherProps) => {
       }
       setHelmet(serverState);
     }
-  }, [canUseDOM, context]);
+  }, [canUseDOM, currentProps]);
 
   const init = React.useCallback(() => {
     if (!rendered) {
       setRendered(true);
 
-      if ('helmetInstances' in context) {
-        const { helmetInstances } = context;
-        helmetInstances.add(restProps);
+      if ('helmetInstances' in currentProps.context) {
+        const { helmetInstances } = currentProps.context;
+        helmetInstances.add(currentProps.restProps);
         emitChange();
       }
     }
-  }, [context, emitChange, rendered, restProps]);
+  }, [currentProps, emitChange, rendered]);
 
   React.useEffect(() => {
     init();
-  }, [init]);
+    return () => {
+      if ('helmetInstances' in currentProps.context) {
+        const { helmetInstances } = currentProps.context;
+        helmetInstances.remove(currentProps.restProps);
+      }
+    };
+  }, [currentProps, init]);
 
   React.useEffect(() => {
     emitChange();
-    return () => {
-      if ('helmetInstances' in context) {
-        const { helmetInstances } = context;
-        helmetInstances.remove(restProps);
-      }
-    };
-  }, [context, emitChange, restProps]);
+  }, [currentProps.context, emitChange]);
 
   return null;
 };

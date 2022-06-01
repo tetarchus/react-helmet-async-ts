@@ -75,22 +75,21 @@ const getAttributesFromPropsList = <T extends ObjectValues<typeof ATTRIBUTE_NAME
   let attributeValues: HelmetProps[T] = {};
   for (const propsInstance of propsList) {
     const attributeProps = propsInstance[tagType];
-    if (attributeProps != null) {
-      attributeValues = { ...attributeValues, attributeProps };
-    }
+    attributeValues = { ...attributeProps, ...attributeValues };
   }
+
   return attributeValues;
 };
 
 const getBaseTagFromPropsList = (
   primaryAttributes: ObjectValuesArray<typeof TAG_PROPERTIES>,
   propsList: HelmetPropsWithoutChildren[],
-): HelmetProps['base'] => {
-  let innermostBaseTag: HelmetProps['base'] | null = null;
+): Array<HelmetProps['base']> => {
+  const innermostBaseTag: Array<HelmetProps['base']> = [];
 
-  for (const propsInstance of propsList.reverse()) {
+  for (const propsInstance of propsList) {
     const baseProps = propsInstance[TAG_NAMES.BASE];
-    if (baseProps != null) {
+    if (baseProps != null && innermostBaseTag.length === 0) {
       for (const key of Object.keys(baseProps)) {
         const lowerCaseAttributeKey = key.toLowerCase();
 
@@ -98,12 +97,12 @@ const getBaseTagFromPropsList = (
           primaryAttributes.includes(lowerCaseAttributeKey) &&
           baseProps[lowerCaseAttributeKey] != null
         ) {
-          innermostBaseTag = baseProps;
+          innermostBaseTag.push(baseProps);
         }
       }
     }
   }
-  return innermostBaseTag ?? undefined;
+  return innermostBaseTag;
 };
 
 const warn = (msg: string): void => {
@@ -123,14 +122,13 @@ const getTagsFromPropsList = <
   const approvedSeenTags = {};
   const approvedTags: Array<TagTypeMap[T]> = [];
 
-  for (const propsInstance of propsList.reverse()) {
+  for (const propsInstance of propsList) {
     const tagInstance = propsInstance[tagName];
-
-    if (!Array.isArray(tagInstance)) {
+    if (tagInstance != null && !Array.isArray(tagInstance)) {
       warn(
         `Helmet: ${tagName} should be of type "Array". Instead found type "${typeof tagInstance}"`,
       );
-    } else {
+    } else if (tagInstance != null) {
       const instanceSeenTags = {};
 
       for (const tag of tagInstance.reverse()) {
@@ -156,7 +154,7 @@ const getTagsFromPropsList = <
           ) {
             primaryAttributeKey = lowerCaseAttributeKey;
           }
-          // Special case for innerHTML which doesn't work lowercased
+          // Special // Special case for innerHTML which doesn't work lowercasedcase for innerHTML which doesn't work lowercased
           if (
             primaryAttributes.includes(attributeKey) &&
             (attributeKey === TAG_PROPERTIES.INNER_HTML ||
@@ -169,6 +167,7 @@ const getTagsFromPropsList = <
         const primaryAttribute = (tag as TagTypeMap[T])[primaryAttributeKey] as unknown;
         if (primaryAttributeKey.trim() !== '' && typeof primaryAttribute === 'string') {
           const value = primaryAttribute.toLowerCase();
+
           let approvedTagEntry = approvedSeenTags[primaryAttributeKey] as Record<
             string,
             unknown
@@ -188,7 +187,7 @@ const getTagsFromPropsList = <
             instanceTagEntry = instanceSeenTags[primaryAttributeKey] as Record<string, boolean>;
           }
 
-          if (approvedTagEntry[value] != null) {
+          if (approvedTagEntry[value] == null) {
             instanceTagEntry[value] = true;
             approvedTags.push(tag);
           }
@@ -205,6 +204,7 @@ const getTagsFromPropsList = <
       }
     }
   }
+
   return approvedTags.reverse();
 };
 
@@ -214,7 +214,7 @@ const getAnyTrueFromPropsList = (
 ): boolean => {
   if (Array.isArray(propsList) && propsList.length > 0) {
     for (const propsInstance of propsList) {
-      if (propsInstance[checkedTag] != null) {
+      if (propsInstance[checkedTag] === true) {
         return true;
       }
     }
@@ -225,8 +225,8 @@ const getAnyTrueFromPropsList = (
 const reducePropsToState = (propsList: HelmetPropsWithoutChildren[]): HelmetState => ({
   baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
   bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
-  defer: getInnermostProperty(propsList, HELMET_PROPS.DEFER),
-  encode: getInnermostProperty(propsList, HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS),
+  defer: getInnermostProperty(propsList, HELMET_PROPS.DEFER) ?? false,
+  encode: getInnermostProperty(propsList, HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS) ?? false,
   htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
   linkTags: getTagsFromPropsList(
     TAG_NAMES.LINK,
@@ -311,12 +311,12 @@ const mapNestedChildrenToProps = (
     case TAG_NAMES.SCRIPT:
     case TAG_NAMES.NOSCRIPT:
       return {
-        innerHTML: nestedChildren,
+        innerHTML: String(nestedChildren),
       };
 
     case TAG_NAMES.STYLE:
       return {
-        cssText: nestedChildren,
+        cssText: String(nestedChildren),
       };
     default:
       throw new Error(
@@ -330,19 +330,16 @@ const flattenArrayTypeChildren = ({
   arrayTypeChildren,
   newChildProps,
   nestedChildren,
-}: ArrayTypeChildrenArgs): Record<string, unknown> => {
-  const ignoredFlattenedChild = arrayTypeChildren[child.type.toString()];
-  return {
-    ...arrayTypeChildren,
-    [child.type.toString()]: [
-      ...(arrayTypeChildren[child.type.toString()] ?? []),
-      {
-        ...newChildProps,
-        ...mapNestedChildrenToProps(child, nestedChildren),
-      },
-    ],
-  };
-};
+}: ArrayTypeChildrenArgs): Record<string, unknown> => ({
+  ...arrayTypeChildren,
+  [child.type.toString()]: [
+    ...((arrayTypeChildren[child.type.toString()] as string | undefined) ?? []),
+    {
+      ...newChildProps,
+      ...mapNestedChildrenToProps(child, nestedChildren),
+    },
+  ],
+});
 
 const mapObjectTypeChildren = ({
   child,
@@ -474,7 +471,7 @@ const mapChildrenToProps = (
     }
   });
 
-  return mapArrayTypeChildrenToProps(arrayTypeChildren, newProps);
+  return mapArrayTypeChildrenToProps(arrayTypeChildren, updatedProps);
 };
 
 export {

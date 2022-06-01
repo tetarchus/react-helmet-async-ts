@@ -37,8 +37,9 @@ class HelmetData {
 
     if (!canUseDOM) {
       this.context.helmet = mapStateOnServer({
-        baseTag: {},
+        baseTag: [],
         bodyAttributes: {},
+        defer: false,
         encode: true,
         htmlAttributes: {},
         linkTags: [],

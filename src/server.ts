@@ -9,7 +9,7 @@ import {
   TAG_NAMES,
   TAG_PROPERTIES,
 } from './constants';
-import { flattenArray, includes, prioritizer, warn } from './utils';
+import { flattenArray, includes, prioritizer } from './utils';
 
 import type {
   ArrayType,
@@ -19,13 +19,13 @@ import type {
   HelmetProps,
   HelmetServerState,
   HelmetState,
-  HelmetTags,
   InitProps,
-  MethodTags,
   ObjectValues,
   PriorityMethods,
   PriorityMethodsArgs,
+  TagMap,
   TagTypeMap,
+  TitleTags,
 } from './types';
 
 const encodeSpecialCharacters = (str: string, encode: boolean = true): string => {
@@ -76,37 +76,46 @@ const generateTitleAsString = (
 
 const generateTagsAsString = <T extends keyof Omit<HelmetServerState, 'priority'>>(
   type: T,
-  tags: Array<ArrayType<NonNullable<HelmetProps[T]>>> | ArrayType<NonNullable<HelmetProps[T]>>,
+  tags: Array<ArrayType<HelmetProps[T]>> | ArrayType<HelmetProps[T]>,
   encode: HelmetProps['encodeSpecialCharacters'],
 ): string => {
   let tagString = '';
   if (Array.isArray(tags)) {
     for (const tag of tags) {
       let attributeHtml = '';
-      for (const attribute of Object.keys(tag)) {
-        if (!(attribute === TAG_PROPERTIES.INNER_HTML || attribute === TAG_PROPERTIES.CSS_TEXT)) {
-          const attr =
-            tag[attribute] == null
-              ? attribute
-              : `${attribute}="${encodeSpecialCharacters(tag[attribute] as string, encode)}"`;
+      if (tag != null) {
+        for (const attribute of Object.keys(tag)) {
+          if (!(attribute === TAG_PROPERTIES.INNER_HTML || attribute === TAG_PROPERTIES.CSS_TEXT)) {
+            const attr =
+              tag[attribute] == null
+                ? attribute
+                : `${attribute}="${encodeSpecialCharacters(tag[attribute] as string, encode)}"`;
 
-          attributeHtml = attributeHtml.trim() !== '' ? `${attributeHtml} ${attr}` : attr;
+            attributeHtml = attributeHtml.trim() !== '' ? `${attributeHtml} ${attr}` : attr;
+          }
         }
-      }
-      const tagContent = typeof tag !== 'string' && 'innerHTML' in tag ? tag.innerHTML : '';
-      const isSelfClosing = includes(SELF_CLOSING_TAGS, type as string);
+        const tagContent =
+          typeof tag !== 'string' && 'innerHTML' in tag
+            ? (tag.innerHTML as string)
+            : typeof tag !== 'string' && 'cssText' in tag
+            ? (tag.cssText as string)
+            : '';
+        const isSelfClosing = includes(SELF_CLOSING_TAGS, type as string);
 
-      tagString = `${tagString}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
-        isSelfClosing ? `/>` : `>${tagContent}</${type}>`
-      }`;
+        tagString = `${tagString}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
+          isSelfClosing ? `/>` : `>${tagContent}</${type}>`
+        }`;
+      }
     }
   }
   return tagString;
 };
 
-const convertElementAttributesToReactProps = <T extends ObjectValues<typeof ATTRIBUTE_NAMES>>(
+const convertElementAttributesToReactProps = <
+  T extends ObjectValues<Pick<typeof ATTRIBUTE_NAMES, 'BODY' | 'HTML' | 'TITLE'>>,
+>(
   attributes: HelmetProps[T],
-  initProps?: InitProps, // = {},
+  initProps?: InitProps,
 ): HelmetProps[T] & InitProps => {
   const newProps: HelmetProps[T] = {};
   if (attributes != null) {
@@ -118,32 +127,37 @@ const convertElementAttributesToReactProps = <T extends ObjectValues<typeof ATTR
 };
 
 const generateTitleAsReactComponent = (
-  _type: typeof TAG_NAMES.TITLE,
-  title: HelmetProps['title'],
-  attributes: HelmetProps['titleAttributes'],
+  type: typeof TAG_NAMES.TITLE,
+  title: HelmetState['title'],
+  attributes: HelmetState['titleAttributes'],
 ): Array<React.ReactElement<InitProps>> => {
   // Assigning into an array to define toString function on it
   const initProps: InitProps = {
     key: title ?? '',
     [HELMET_ATTRIBUTE]: true,
   };
-  const props = convertElementAttributesToReactProps(attributes, initProps);
+  const props = convertElementAttributesToReactProps(
+    attributes,
+    initProps,
+  ) as HelmetState['titleAttributes'];
 
-  return [React.createElement(TAG_NAMES.TITLE, props, title)];
+  return props != null ? [React.createElement(type, props, title)] : [];
 };
 
 const generateTagsAsReactComponent = <T extends keyof Omit<HelmetServerState, 'priority'>>(
   type: T,
-  tags: HelmetTags<T>,
-): Array<React.ReactElement<InitProps>> =>
-  Array.isArray(tags)
-    ? tags.map((tag, i) => {
-        const newProps: React.HTMLAttributes<TagTypeMap[T]> = {};
-        const mappedTag: InitProps = {
-          key: i,
-          [HELMET_ATTRIBUTE]: true,
-        };
-
+  tags: Array<ArrayType<HelmetProps[T]>> | ArrayType<HelmetProps[T]>,
+): Array<React.ReactElement<InitProps>> => {
+  const components: Array<React.ReactElement<InitProps>> = [];
+  if (Array.isArray(tags)) {
+    for (let i = 0; i < tags.length; i++) {
+      const tag = tags[i];
+      const newProps: React.HTMLAttributes<TagTypeMap[T]> = {};
+      const mappedTag: InitProps = {
+        key: i,
+        [HELMET_ATTRIBUTE]: true,
+      };
+      if (tag != null) {
         for (const attribute of Object.keys(tag)) {
           const mappedAttribute = (REACT_TAG_MAP[attribute] as string | undefined) ?? attribute;
 
@@ -151,64 +165,68 @@ const generateTagsAsReactComponent = <T extends keyof Omit<HelmetServerState, 'p
             mappedAttribute === TAG_PROPERTIES.INNER_HTML ||
             mappedAttribute === TAG_PROPERTIES.CSS_TEXT
           ) {
-            const content = typeof tag !== 'string' && 'innerHTML' in tag ? tag.innerHTML : '';
+            const content =
+              typeof tag !== 'string' && 'innerHTML' in tag
+                ? (tag.innerHTML as string)
+                : typeof tag !== 'string' && 'cssText' in tag
+                ? (tag.cssText as string)
+                : '';
             newProps.dangerouslySetInnerHTML = { __html: content };
           } else {
             newProps[mappedAttribute] = tag[attribute] as unknown;
           }
         }
+      }
+      components.push(React.createElement(type, { ...mappedTag, ...newProps }));
+    }
+  }
+  return components;
+};
 
-        return React.createElement(type, mappedTag);
-      })
-    : [];
+const getMethodsForBodyTag = <T extends typeof ATTRIBUTE_NAMES.BODY>(
+  _type: T,
+  tags: HelmetProps[T],
+): HelmetHTMLBodyDatum => ({
+  toComponent: (): HelmetProps[TagMap[T]] & InitProps => convertElementAttributesToReactProps(tags),
+  toString: (): string => generateElementAttributesAsString(tags),
+});
 
-const getMethodsForTag = <T extends keyof Omit<HelmetServerState, 'priority'>>(
+const getMethodsForHtmlTag = <T extends typeof ATTRIBUTE_NAMES.HTML>(
+  _type: T,
+  tags: HelmetProps[T],
+): HelmetHTMLElementDatum => ({
+  toComponent: (): HelmetProps[TagMap[T]] & InitProps => convertElementAttributesToReactProps(tags),
+  toString: (): string => generateElementAttributesAsString(tags),
+});
+
+const getMethodsForTitleTag = <T extends typeof TAG_NAMES.TITLE>(
   type: T,
-  tags: MethodTags<T>,
+  tags: TitleTags,
   encode: HelmetProps['encodeSpecialCharacters'],
-): HelmetDatum | HelmetHTMLBodyDatum | HelmetHTMLElementDatum => {
-  const validTitleTags = 'title' in tags && 'titleAttributes' in tags && type === TAG_NAMES.TITLE;
-  const validOtherTags = !('title' in tags);
+): HelmetDatum => ({
+  toComponent: (): Array<React.ReactElement<InitProps>> =>
+    generateTitleAsReactComponent(type, tags.title, tags.titleAttributes),
+  toString: (): string => generateTitleAsString(type, tags.title, tags.titleAttributes, encode),
+});
+
+const getMethodsForTag = <
+  T extends keyof Omit<HelmetServerState, 'body' | 'html' | 'priority' | 'title'>,
+>(
+  type: T,
+  tags: Array<ArrayType<HelmetProps[T]>> | ArrayType<HelmetProps[T]> | undefined,
+  encode: HelmetProps['encodeSpecialCharacters'],
+): HelmetDatum => {
   const defaultMethods = {
     toComponent: (): Array<React.ReactElement<InitProps>> => [],
     toString: (): string => '',
   };
-  switch (type) {
-    case TAG_NAMES.TITLE:
-      if (!validTitleTags) {
-        warn(`getMethodsForTag 'title' was not passed both the title and its attributes`);
-        return defaultMethods;
-      }
-      return {
-        toComponent: (): Array<React.ReactElement<InitProps>> =>
-          generateTitleAsReactComponent(type, tags.title, tags.titleAttributes),
-        toString: (): string =>
-          generateTitleAsString(type, tags.title, tags.titleAttributes, encode),
-      };
-    case ATTRIBUTE_NAMES.BODY:
-    case ATTRIBUTE_NAMES.HTML:
-      if (!validOtherTags) {
-        warn(`getMethodsForTag '${type}' was passed an incorrect object rather than tags`);
-        return defaultMethods;
-      }
-      return {
-        toComponent: ():
-          | InitProps & (HelmetProps['bodyAttributes'] | HelmetProps['htmlAttributes']) =>
-          convertElementAttributesToReactProps(Array.isArray(tags) ? tags[0] : tags),
-        toString: (): string =>
-          generateElementAttributesAsString(Array.isArray(tags) ? tags[0] : tags),
-      };
-    default:
-      if (!validOtherTags) {
-        warn(`getMethodsForTag '${type}' was passed an incorrect object rather than tags`);
-        return defaultMethods;
-      }
-      return {
-        toComponent: (): Array<React.ReactElement<InitProps>> =>
-          generateTagsAsReactComponent(type, Array.isArray(tags) ? tags : []),
-        toString: (): string => generateTagsAsString(type, Array.isArray(tags) ? tags : [], encode),
-      };
+  if (tags != null) {
+    return {
+      toComponent: () => generateTagsAsReactComponent(type, tags),
+      toString: () => generateTagsAsString(type, tags, encode),
+    };
   }
+  return defaultMethods;
 };
 
 const getPriorityMethods = ({
@@ -267,7 +285,8 @@ const mapStateOnServer = ({
     toComponent: (): React.ReactElement[] => [],
     toString: () => '',
   };
-  if (prioritizeSeoTags != null) {
+
+  if (prioritizeSeoTags === true) {
     ({ priorityMethods, linkTagDefaults, metaTagDefaults, scriptTagDefaults } = getPriorityMethods({
       linkTags,
       metaTags,
@@ -276,24 +295,16 @@ const mapStateOnServer = ({
     }));
   }
   return {
-    base: getMethodsForTag(TAG_NAMES.BASE, baseTag ?? {}, encode) as HelmetDatum,
-    bodyAttributes: getMethodsForTag(
-      ATTRIBUTE_NAMES.BODY,
-      bodyAttributes ?? {},
-      encode,
-    ) as HelmetHTMLBodyDatum,
-    htmlAttributes: getMethodsForTag(
-      ATTRIBUTE_NAMES.HTML,
-      htmlAttributes ?? {},
-      encode,
-    ) as HelmetHTMLElementDatum,
-    link: getMethodsForTag(TAG_NAMES.LINK, linkTagDefaults ?? [], encode) as HelmetDatum,
-    meta: getMethodsForTag(TAG_NAMES.META, metaTagDefaults ?? [], encode) as HelmetDatum,
-    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags ?? [], encode) as HelmetDatum,
+    base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
+    bodyAttributes: getMethodsForBodyTag(ATTRIBUTE_NAMES.BODY, bodyAttributes),
+    htmlAttributes: getMethodsForHtmlTag(ATTRIBUTE_NAMES.HTML, htmlAttributes),
+    link: getMethodsForTag(TAG_NAMES.LINK, linkTagDefaults, encode),
+    meta: getMethodsForTag(TAG_NAMES.META, metaTagDefaults, encode),
+    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
     priority: priorityMethods,
-    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTagDefaults ?? [], encode) as HelmetDatum,
-    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags ?? [], encode) as HelmetDatum,
-    title: getMethodsForTag(TAG_NAMES.TITLE, { title, titleAttributes }, encode) as HelmetDatum,
+    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTagDefaults, encode),
+    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
+    title: getMethodsForTitleTag(TAG_NAMES.TITLE, { title, titleAttributes }, encode),
   };
 };
 

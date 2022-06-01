@@ -7,7 +7,7 @@ import { mapChildrenToProps } from './utils';
 
 import type { HelmetProps, HelmetPropsWithoutChildren } from './types';
 
-const Helmet: React.FC<HelmetProps> = ({
+const Helmet: React.FC<Partial<HelmetProps>> = ({
   base,
   bodyAttributes,
   children,
@@ -26,7 +26,7 @@ const Helmet: React.FC<HelmetProps> = ({
   title,
   titleAttributes,
   titleTemplate,
-}: HelmetProps) => {
+}: Partial<HelmetProps>) => {
   let newProps: HelmetPropsWithoutChildren = {
     base,
     bodyAttributes,
