@@ -15,11 +15,10 @@ const unicorn = require('./unicornPlugin');
 
 module.exports = {
   root: true,
-  parser: '@babel/eslint-parser',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     allowReserved: false,
     ecmaFeatures: { impliedStrict: true, jsx: true, modules: true },
-    // babelOptions: { configFile: `${__dirname}/../babelrc/web.babel.js` },
     ecmaVersion: '6',
     sourceType: 'module',
     requireConfigFile: false,
@@ -73,19 +72,5 @@ module.exports = {
     ...unicorn.rules,
     ...jest.rules,
   },
-  overrides: [
-    ...typescript.overrides,
-    ...typescriptExt.overrides,
-    ...jest.overrides,
-    {
-      files: ['webpack/**/*.js', 'webpack.*.js'],
-      rules: {
-        '@typescript-eslint/no-require-imports': 'off',
-        '@typescript-eslint/no-var-requires': 'off',
-        'import/no-dynamic-require': 'off',
-        'import/unambiguous': 'off',
-        'unicorn/prefer-module': 'off',
-      },
-    },
-  ],
+  overrides: [...typescript.overrides, ...typescriptExt.overrides, ...jest.overrides],
 };
