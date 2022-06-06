@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Helmet } from '..';
-import { HELMET_ATTRIBUTE, HTML_TAG_MAP } from '../components/constants';
+import { Helmet } from '../src';
+import { HELMET_ATTRIBUTE, HTML_TAG_MAP } from '../src/constants';
 
 import { ReactServer } from './setup/encoderFix';
 import { after, before, render } from './setup/testSetup';

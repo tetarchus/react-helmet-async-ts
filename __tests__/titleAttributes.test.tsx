@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Helmet } from '..';
+import { Helmet } from '../src';
 
-import { HELMET_ATTRIBUTE } from '../components/constants';
+import { HELMET_ATTRIBUTE } from '../src/constants';
 
 import { after, before, render } from './setup/testSetup';
 

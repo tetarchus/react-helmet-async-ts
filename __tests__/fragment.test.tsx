@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Helmet } from '..';
+import { Helmet } from '../src';
 
 import { render } from './setup/testSetup';
 

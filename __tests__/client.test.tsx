@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Helmet } from '..';
+import { Helmet } from '../src';
 
 import { after, before, render } from './setup/testSetup';
 
-import type { HelmetState } from '../components/types';
+import type { HelmetState } from '../src/types';
 
 describe('onChangeClientState', () => {
   beforeEach(before);

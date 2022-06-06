@@ -6,6 +6,12 @@ import { clearInstances } from '../../src/HelmetData';
 
 import type { HelmetContext, HelmetProviderProps } from '../../src';
 
+declare global {
+  interface Window {
+    __spy__?: (arg: number) => number;
+  }
+}
+
 let unmount: (() => void) | null = null;
 
 const render = (

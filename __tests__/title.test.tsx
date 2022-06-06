@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Helmet } from '..';
+import { Helmet } from '../src';
 
 import { ReactServer } from './setup/encoderFix';
 import { after, before, isArray, render } from './setup/testSetup';
