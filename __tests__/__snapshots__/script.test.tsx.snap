@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<script> tags Browser API sets script tags based on deepest nested component 1`] = `"<script src=\\"http://localhost/test.js\\" type=\\"text/javascript\\" data-rh=\\"true\\"></script>"`;
+
+exports[`<script> tags Browser API sets script tags based on deepest nested component 2`] = `"<script src=\\"http://localhost/test2.js\\" type=\\"text/javascript\\" data-rh=\\"true\\"></script>"`;
+
+exports[`<script> tags Browser API sets undefined attribute values to empty strings 1`] = `"<script src=\\"foo.js\\" async=\\"\\" data-rh=\\"true\\"></script>"`;
+
+exports[`<script> tags Browser Declarative API sets script tags based on deepest nested component 1`] = `"<script src=\\"http://localhost/test.js\\" type=\\"text/javascript\\" data-rh=\\"true\\"></script>"`;
+
+exports[`<script> tags Browser Declarative API sets script tags based on deepest nested component 2`] = `"<script src=\\"http://localhost/test2.js\\" type=\\"text/javascript\\" data-rh=\\"true\\"></script>"`;
+
+exports[`<script> tags Browser Declarative API sets undefined attribute values to empty strings 1`] = `"<script src=\\"foo.js\\" async=\\"\\" data-rh=\\"true\\"></script>"`;
+
+exports[`<script> tags Server API renders script tags as React components 1`] = `"<script data-rh=\\"true\\" src=\\"http://localhost/test2.js\\" type=\\"text/javascript\\"></script><script data-rh=\\"true\\" src=\\"http://localhost/test.js\\" type=\\"text/javascript\\"></script>"`;
+
+exports[`<script> tags Server API renders script tags as string 1`] = `"<script data-rh=\\"true\\" src=\\"http://localhost/test2.js\\" type=\\"text/javascript\\"/><script data-rh=\\"true\\" src=\\"http://localhost/test.js\\" type=\\"text/javascript\\"/>"`;
+
+exports[`<script> tags Server Declarative API renders script tags as React components 1`] = `"<script data-rh=\\"true\\" src=\\"http://localhost/test2.js\\" type=\\"text/javascript\\"></script><script data-rh=\\"true\\" src=\\"http://localhost/test.js\\" type=\\"text/javascript\\"></script>"`;
+
+exports[`<script> tags Server Declarative API renders script tags as string 1`] = `"<script data-rh=\\"true\\" src=\\"http://localhost/test2.js\\" type=\\"text/javascript\\"/><script data-rh=\\"true\\" src=\\"http://localhost/test.js\\" type=\\"text/javascript\\"/>"`;

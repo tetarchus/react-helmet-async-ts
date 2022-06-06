@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<noscript> tags Browser API updates noscript tags 1`] = `"<noscript id=\\"bar\\" data-rh=\\"true\\"><link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"foo.css\\" /></noscript>"`;
+
+exports[`<noscript> tags Browser Declarative API updates noscript tags 1`] = `"<noscript id=\\"bar\\" data-rh=\\"true\\"><link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"foo.css\\" /></noscript>"`;
+
+exports[`<noscript> tags Server API renders noscript tags as React components 1`] = `"<noscript data-rh=\\"true\\" id=\\"bar\\"><link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"/style2.css\\" /></noscript><noscript data-rh=\\"true\\" id=\\"foo\\"><link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"/style.css\\" /></noscript>"`;
+
+exports[`<noscript> tags Server Declarative API renders noscript tags as React components 1`] = `"<noscript data-rh=\\"true\\" id=\\"bar\\"><link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"/style2.css\\" /></noscript><noscript data-rh=\\"true\\" id=\\"foo\\"><link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"/style.css\\" /></noscript>"`;

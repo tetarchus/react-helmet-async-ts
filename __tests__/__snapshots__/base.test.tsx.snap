@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<base> tag Browser API sets base tag based on deepest nested component 1`] = `"<base href=\\"http://mysite.com/public\\" data-rh=\\"true\\">"`;
+
+exports[`<base> tag Browser Declarative API sets base tag based on deepest nested component 1`] = `"<base href=\\"http://mysite.com/public\\" data-rh=\\"true\\">"`;
+
+exports[`<base> tag Server API renders base tag as React component 1`] = `"<base data-rh=\\"true\\" target=\\"_blank\\" href=\\"http://mysite.com/\\"/>"`;
+
+exports[`<base> tag Server API renders base tags as string 1`] = `"<base data-rh=\\"true\\" target=\\"_blank\\" href=\\"http://mysite.com/\\"></base>"`;
+
+exports[`<base> tag Server Declarative API renders base tag as React component 1`] = `"<base data-rh=\\"true\\" target=\\"_blank\\" href=\\"http://mysite.com/\\"/>"`;
+
+exports[`<base> tag Server Declarative API renders base tags as string 1`] = `"<base data-rh=\\"true\\" target=\\"_blank\\" href=\\"http://mysite.com/\\"></base>"`;
