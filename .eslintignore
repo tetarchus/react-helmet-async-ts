@@ -4,3 +4,11 @@
 /node_modules
 package.json
 package-lock.json
+.gitignore
+.eslint*
+.npmignore
+.nvmrc
+.prettier*
+jest.*.js
+LICENSE
+README.md
