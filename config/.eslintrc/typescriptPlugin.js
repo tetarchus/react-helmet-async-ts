@@ -459,22 +459,7 @@ module.exports = {
       parserOptions: {
         ecmaVersion: 'ES2015',
         tsconfigRootDir: `${__dirname}/../../`,
-        project: [
-          './tsconfig.json',
-          './apps/com.parkholidays/www/tsconfig.json',
-          './apps/shared/tsconfig.json',
-          './niobe/tsconfig.json',
-          './niobe/services/contentstack/tsconfig.json',
-          './niobe/utilities/contentstackWebhook/tsconfig.json',
-          './niobe/services/holidayAvailability/tsconfig.json',
-          './niobe/services/review/tsconfig.json',
-          './packages/core/tsconfig.json',
-          './packages/icons/tsconfig.json',
-          './packages/utilities/tsconfig.json',
-          './workers/cached-data/tsconfig.json',
-          './workers/sales-partners/tsconfig.json',
-          './lambda/tsconfig.json',
-        ],
+        project: ['./tsconfig.json', './tsconfig.testing.json'],
       },
       rules: {
         // Some rules are already handled by TS directly, therefore can be

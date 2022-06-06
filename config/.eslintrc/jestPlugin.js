@@ -16,6 +16,8 @@ module.exports = {
         'max-classes-per-file': 'off',
         'no-magic-numbers': 'off',
         'sort-keys': 'off',
+        '@typescript-eslint/no-magic-numbers': 'off',
+        '@typescript-eslint/unbound-method': 'off',
         // Have control over test and it usages
         // https://github.com/jest-community/eslint-plugin-jest/blob/main/docs/rules/consistent-test-it.md
         'jest/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
@@ -93,7 +95,7 @@ module.exports = {
         'jest/no-test-prefixes': 'error',
         // Disallow explicitly returning from tests
         // https://github.com/jest-community/eslint-plugin-jest/blob/main/docs/rules/no-test-return-statement.md
-        'jest/no-test-return': 'error',
+        'jest/no-test-return-statement': 'error',
         // Suggest using `toBeCalledWith()` or `toHaveBeenCalledWith()`
         // https://github.com/jest-community/eslint-plugin-jest/blob/main/docs/rules/prefer-called-with.md
         'jest/prefer-called-with': 'error',
