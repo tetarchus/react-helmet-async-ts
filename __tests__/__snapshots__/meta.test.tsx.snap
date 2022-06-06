@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<meta> tags Browser API allows duplicate meta tags if specified in the same component 1`] = `"<meta name=\\"description\\" content=\\"Test description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser API allows duplicate meta tags if specified in the same component 2`] = `"<meta name=\\"description\\" content=\\"Duplicate description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser API fails gracefully when meta is wrong shape 1`] = `"Helmet: meta should be of type \\"Array\\". Instead found type \\"object\\""`;
+
+exports[`<meta> tags Browser API overrides duplicate meta tags with single meta tag in a nested component 1`] = `"<meta name=\\"description\\" content=\\"Inner description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser API overrides single meta tag with duplicate meta tags in a nested component 1`] = `"<meta name=\\"description\\" content=\\"Inner description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser API overrides single meta tag with duplicate meta tags in a nested component 2`] = `"<meta name=\\"description\\" content=\\"Inner duplicate description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser API sets meta tags based on deepest nested component 1`] = `"<meta charset=\\"utf-8\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser API sets meta tags based on deepest nested component 2`] = `"<meta name=\\"description\\" content=\\"Inner description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser API sets meta tags based on deepest nested component 3`] = `"<meta name=\\"keywords\\" content=\\"test,meta,tags\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser Declarative API allows duplicate meta tags if specified in the same component 1`] = `"<meta name=\\"description\\" content=\\"Test description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser Declarative API allows duplicate meta tags if specified in the same component 2`] = `"<meta name=\\"description\\" content=\\"Duplicate description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser Declarative API overrides duplicate meta tags with single meta tag in a nested component 1`] = `"<meta name=\\"description\\" content=\\"Inner description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser Declarative API overrides single meta tag with duplicate meta tags in a nested component 1`] = `"<meta name=\\"description\\" content=\\"Inner description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser Declarative API overrides single meta tag with duplicate meta tags in a nested component 2`] = `"<meta name=\\"description\\" content=\\"Inner duplicate description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser Declarative API sets meta tags based on deepest nested component 1`] = `"<meta charset=\\"utf-8\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser Declarative API sets meta tags based on deepest nested component 2`] = `"<meta name=\\"description\\" content=\\"Inner description\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Browser Declarative API sets meta tags based on deepest nested component 3`] = `"<meta name=\\"keywords\\" content=\\"test,meta,tags\\" data-rh=\\"true\\">"`;
+
+exports[`<meta> tags Server API renders meta tags as React components 1`] = `"<meta data-rh=\\"true\\" itemProp=\\"name\\" content=\\"Test name itemprop\\"/><meta data-rh=\\"true\\" property=\\"og:type\\" content=\\"article\\"/><meta data-rh=\\"true\\" http-equiv=\\"content-type\\" content=\\"text/html\\"/><meta data-rh=\\"true\\" name=\\"description\\" content=\\"Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`\\"/><meta data-rh=\\"true\\" charSet=\\"utf-8\\"/>"`;
+
+exports[`<meta> tags Server API renders meta tags as string 1`] = `"<meta data-rh=\\"true\\" itemprop=\\"name\\" content=\\"Test name itemprop\\"></meta><meta data-rh=\\"true\\" property=\\"og:type\\" content=\\"article\\"></meta><meta data-rh=\\"true\\" http-equiv=\\"content-type\\" content=\\"text/html\\"></meta><meta data-rh=\\"true\\" name=\\"description\\" content=\\"Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`\\"></meta><meta data-rh=\\"true\\" charset=\\"utf-8\\"></meta>"`;
+
+exports[`<meta> tags Server Declarative API renders meta tags as React components 1`] = `"<meta data-rh=\\"true\\" itemProp=\\"name\\" content=\\"Test name itemprop\\"/><meta data-rh=\\"true\\" property=\\"og:type\\" content=\\"article\\"/><meta data-rh=\\"true\\" http-equiv=\\"content-type\\" content=\\"text/html\\"/><meta data-rh=\\"true\\" name=\\"description\\" content=\\"Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`\\"/><meta data-rh=\\"true\\" charSet=\\"utf-8\\"/>"`;
+
+exports[`<meta> tags Server Declarative API renders meta tags as string 1`] = `"<meta data-rh=\\"true\\" itemprop=\\"name\\" content=\\"Test name itemprop\\"></meta><meta data-rh=\\"true\\" property=\\"og:type\\" content=\\"article\\"></meta><meta data-rh=\\"true\\" http-equiv=\\"content-type\\" content=\\"text/html\\"></meta><meta data-rh=\\"true\\" name=\\"description\\" content=\\"Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`\\"></meta><meta data-rh=\\"true\\" charset=\\"utf-8\\"></meta>"`;

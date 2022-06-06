@@ -118,6 +118,7 @@ renderToNodeStream(app)
 ```
 
 ## Usage in Jest
+
 While testing in using jest, if there is a need to emulate SSR, the following string is required to have the test behave the way they are expected to.
 
 ```javascript
@@ -131,6 +132,7 @@ HelmetProvider.canUseDOM = false;
 It is understood that in some cases for SEO, certain tags should appear earlier in the HEAD. Using the `prioritizeSeoTags` flag on any `<Helmet>` component allows the server render of react-helmet-async to expose a method for prioritizing relevant SEO tags.
 
 In the component:
+
 ```javascript
 <Helmet prioritizeSeoTags>
   <title>A fancy webpage</title>
@@ -174,8 +176,8 @@ Will result in:
 A list of prioritized tags and attributes can be found in [constants.js](./src/constants.js).
 
 ## Usage without Context
-You can optionally use `<Helmet>` outside a context by manually creating a stateful `HelmetData` instance, and passing that stateful object to each `<Helmet>` instance:
 
+You can optionally use `<Helmet>` outside a context by manually creating a stateful `HelmetData` instance, and passing that stateful object to each `<Helmet>` instance:
 
 ```js
 import React from 'react';

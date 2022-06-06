@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Title Browser API correctly renderspage title with "itemprop" prop 1`] = `"Test Title with itemProp"`;
+
+exports[`Title Browser API does not encode all characters with HTML character entity equivalents 1`] = `"膣膗 鍆錌雔"`;
+
+exports[`Title Browser API merges deepest component title with nearest upstream titleTemplate 1`] = `"Second Test"`;
+
+exports[`Title Browser API renders dollar characters in a title correctly when titleTemplate present 1`] = `"This is a te$t te$$t te$$$t te$$$$t"`;
+
+exports[`Title Browser API replaces multiple title strings in titleTemplate 1`] = `"This is a Test of the titleTemplate feature. Another Test."`;
+
+exports[`Title Browser API sets title based on deepest nested component 1`] = `"Nested Title"`;
+
+exports[`Title Browser API sets title using deepest nested component with a defined title 1`] = `""`;
+
+exports[`Title Browser API updates page title 1`] = `"Test Title"`;
+
+exports[`Title Browser API updates page title with multiple children 1`] = `"Child Two Title"`;
+
+exports[`Title Browser API uses a titleTemplate based on deepest nested component 1`] = `"A Second Test using nested titleTemplate attributes"`;
+
+exports[`Title Browser API uses a titleTemplate if defined 1`] = `"This is a Test of the titleTemplate feature"`;
+
+exports[`Title Browser API uses defaultTitle if no title is defined 1`] = `"This is a of the titleTemplate feature"`;
+
+exports[`Title Browser Declarative API clears title tag if empty title is defined 1`] = `"Existing Title"`;
+
+exports[`Title Browser Declarative API correctly renderspage title with "itemprop" prop 1`] = `"Test Title with itemProp"`;
+
+exports[`Title Browser Declarative API does not encode all characters with HTML character entity equivalents 1`] = `"膣膗 鍆錌雔"`;
+
+exports[`Title Browser Declarative API merges deepest component title with nearest upstream titleTemplate 1`] = `"Second Test"`;
+
+exports[`Title Browser Declarative API renders dollar characters in a title correctly when titleTemplate present 1`] = `"This is a te$t te$$t te$$$t te$$$$t"`;
+
+exports[`Title Browser Declarative API replaces multiple title strings in titleTemplate 1`] = `"This is a Test of the titleTemplate feature. Another Test."`;
+
+exports[`Title Browser Declarative API retains existing title tag when no title tag is defined 1`] = `""`;
+
+exports[`Title Browser Declarative API sets title based on deepest nested component 1`] = `"Nested Title"`;
+
+exports[`Title Browser Declarative API sets title using deepest nested component with a defined title 1`] = `""`;
+
+exports[`Title Browser Declarative API updates page title 1`] = `"Test Title"`;
+
+exports[`Title Browser Declarative API updates page title and allows children containing expressions 1`] = `"Title:Some Great Title"`;
+
+exports[`Title Browser Declarative API updates page title with multiple children 1`] = `"Child Two Title"`;
+
+exports[`Title Browser Declarative API uses a titleTemplate based on deepest nested component 1`] = `"A Second Test using nested titleTemplate attributes"`;
+
+exports[`Title Browser Declarative API uses a titleTemplate if defined 1`] = `"This is a Test of the titleTemplate feature"`;
+
+exports[`Title Browser Declarative API uses defaultTitle if no title is defined 1`] = `"Fallback"`;
+
+exports[`Title Server API does not encode all characters with HTML character entity equivalents 1`] = `"<title data-rh=\\"true\\">膣膗 鍆錌雔</title>"`;
+
+exports[`Title Server API encodes special characters in title 1`] = `"<title data-rh=\\"true\\">Dangerous &lt;script&gt; include</title>"`;
+
+exports[`Title Server API opts out of string encoding 1`] = `"<title data-rh=\\"true\\">This is text and & and '.</title>"`;
+
+exports[`Title Server API renders title as React component 1`] = `"<title data-rh=\\"true\\">Dangerous &lt;script&gt; include</title>"`;
+
+exports[`Title Server API renders title tag as string 1`] = `"<title data-rh=\\"true\\">Dangerous &lt;script&gt; include</title>"`;
+
+exports[`Title Server API renders title with itemprop name as React component 1`] = `"<title data-rh=\\"true\\" itemProp=\\"name\\">Title with Itemprop</title>"`;
+
+exports[`Title Server API renders title with itemprop name as string 1`] = `"<title data-rh=\\"true\\" itemprop=\\"name\\">Title with Itemprop</title>"`;
+
+exports[`Title Server Declarative API does not encode all characters with HTML character entity equivalents 1`] = `"<title data-rh=\\"true\\">膣膗 鍆錌雔</title>"`;
+
+exports[`Title Server Declarative API encodes special characters in title 1`] = `"<title data-rh=\\"true\\">Dangerous &lt;script&gt; include</title>"`;
+
+exports[`Title Server Declarative API opts out of string encoding 1`] = `"<title data-rh=\\"true\\">This is text and & and '.</title>"`;
+
+exports[`Title Server Declarative API renders title and allows children containing expressions 1`] = `"<title data-rh=\\"true\\">Title:Some Great Title</title>"`;
+
+exports[`Title Server Declarative API renders title as React component 1`] = `"<title data-rh=\\"true\\">Dangerous &lt;script&gt; include</title>"`;
+
+exports[`Title Server Declarative API renders title tag as string 1`] = `"<title data-rh=\\"true\\">Dangerous &lt;script&gt; include</title>"`;
+
+exports[`Title Server Declarative API renders title with itemprop name as React component 1`] = `"<title data-rh=\\"true\\" itemProp=\\"name\\">Title with Itemprop</title>"`;
+
+exports[`Title Server Declarative API renders title with itemprop name as string 1`] = `"<title data-rh=\\"true\\" itemprop=\\"name\\">Title with Itemprop</title>"`;
+
+exports[`Title Server RenderStatic html encodes title 1`] = `"<title data-rh=\\"true\\">Dangerous &lt;script&gt; include</title>"`;
+
+exports[`Title Server RenderStatic renders title as React component 1`] = `"<title data-rh=\\"true\\">Dangerous &lt;script&gt; include</title>"`;

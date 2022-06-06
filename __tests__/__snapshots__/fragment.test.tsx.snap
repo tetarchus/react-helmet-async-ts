@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`React.Fragments parses Fragments 1`] = `"Hello"`;
+
+exports[`React.Fragments parses nested Fragments 1`] = `"Baz"`;

@@ -1,5 +1,6 @@
 module.exports = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'node',
-  testMatch: ['**/__tests__/**/*.test.js'],
+  testEnvironment: 'jsdom',
+  transform: { '\\.(ts|js)x?$': 'ts-jest' },
+  testMatch: ['**/__tests__/**/*.test.tsx'],
+  transformIgnorePatterns: ['node_modules/(?!ssr-window)'],
 };
