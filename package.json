@@ -6,7 +6,7 @@
   "types": "src/types.d.ts",
   "repository": "http://github.com/tetarchus/react-helmet-async-ts",
   "author": "tetarchus",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "files": [
     "lib/",
     "src/"
