@@ -1,7 +1,7 @@
 import { render as rtlRender } from '@testing-library/react';
 import React from 'react';
 
-import { HelmetContextProvider } from '../../src';
+import { HelmetProvider } from '../../src';
 import { clearInstances } from '../../src/HelmetData';
 
 import type { HelmetContext, HelmetProviderProps } from '../../src';
@@ -18,7 +18,7 @@ const render = (
   node: JSX.Element,
   mockSSR: boolean = false,
   context: HelmetContext = {},
-): Omit<ReturnType<typeof rtlRender>, 'unmount'> & { context: HelmetContext } => {
+): ReturnType<typeof rtlRender> & { context: HelmetContext } => {
   const props: HelmetProviderProps = {};
   if (mockSSR) {
     props.context = context;
@@ -27,11 +27,11 @@ const render = (
 
   const { unmount: rtlUnmount, ...rest } = rtlRender(
     <React.StrictMode>
-      <HelmetContextProvider {...props}>{node}</HelmetContextProvider>
+      <HelmetProvider {...props}>{node}</HelmetProvider>
     </React.StrictMode>,
   );
   unmount = rtlUnmount;
-  return { ...rest, context };
+  return { unmount: rtlUnmount, ...rest, context };
 };
 
 const before = (): void => {
