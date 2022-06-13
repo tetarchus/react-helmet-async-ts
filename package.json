@@ -39,7 +39,7 @@
     "eslint-plugin-react-hooks": "4.5.0",
     "eslint-plugin-testing-library": "^5.5.0",
     "eslint-plugin-unicorn": "^42.0.0",
-    "jest": "28.1.0",
+    "jest": "28.1.1",
     "jest-environment-jsdom": "^28.1.0",
     "jsdom": "19.0.0",
     "prettier": "2.6.2",
