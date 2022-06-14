@@ -11,7 +11,7 @@ Usage is mostly identical to `react-helmet-async` however under the hood there a
 - `Helmet`, `HelmetContext`, and `HelmetProvider` are now Functional components, rather than Class Components.
 - Testing has been rewritten to use React 18 and get rid of enzyme which doesn't appear to be getting any updates for React 18.
 
-`<Helmet>` usage is synonymous with `react-helmet`, but server and client now requires `<HelmetProvider>` to encapsulate state per request.
+`<Helmet>` usage is synonymous with `react-helmet`, but server and client now requires `<HelmetProvider>` to encapsulate state per request. **The only major difference is that the attribute that identifies that a tag is managed by `Helmet` was renamed from `data-react-helmet` to `data-rh` in the `react-helmet-async` package, which has also carried over to this fork.**
 
 `react-helmet` relies on `react-side-effect`, which is not thread-safe. If you are doing anything asynchronous on the server, you need Helmet to encapsulate data on a per-request basis, this package does just that.
 
